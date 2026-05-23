@@ -1,0 +1,43 @@
+# Universal
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+*.log
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Node.js / Next.js
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.gradle/
+
+# Docker
+*.pid
+*.seed
+
+# Python (tools/scripts)
+__pycache__/
+*.pyc
+
+# OS
+.Spotlight-V100
+.Trashes

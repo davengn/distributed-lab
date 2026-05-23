@@ -1,0 +1,19 @@
+{
+  "name": "distributed-lab",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Self-hosted learning sandbox for distributed systems and microservices",
+  "license": "MIT",
+  "scripts": {
+    "dev": "pnpm --filter control-panel dev",
+    "build": "pnpm --filter control-panel build",
+    "lint": "pnpm --filter control-panel lint",
+    "test": "pnpm --filter control-panel test"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "unrs-resolver"
+    ]
+  }
+}
