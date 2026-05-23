@@ -6,7 +6,7 @@ COPY target/dependency/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.
 COPY target/*.jar /app/service.jar
 
 ENV JAVA_TOOL_OPTIONS="-javaagent:/app/opentelemetry-javaagent.jar"
-ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
 ENV OTEL_RESOURCE_ATTRIBUTES=service.name=template-service
 ENV OTEL_TRACES_EXPORTER=otlp
 ENV OTEL_METRICS_EXPORTER=otlp

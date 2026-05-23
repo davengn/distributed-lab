@@ -41,7 +41,7 @@
     </dependency>
     <dependency>
       <groupId>com.github.docker-java</groupId>
-      <artifactId>docker-java-transport-httpclient5</artifactId>
+      <artifactId>docker-java-transport-zerodep</artifactId>
       <version>${docker-java.version}</version>
     </dependency>
 
@@ -76,6 +76,11 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.kafka</groupId>

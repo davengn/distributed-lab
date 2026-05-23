@@ -11,7 +11,7 @@ Guided tour through the DistributedLab observability stack: Prometheus, Grafana,
 **Objective**: Understand what metrics are available and how they're collected.
 
 **Steps**:
-1. Open Grafana at http://localhost:3001/grafana (admin/admin)
+1. Open Grafana at http://localhost:3002/grafana (admin/admin)
 2. Navigate to the pre-built DistributedLab dashboard
 3. Identify CPU, memory, request rate, and error rate metrics
 4. Observe how metrics change when load is applied

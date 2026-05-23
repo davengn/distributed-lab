@@ -5,9 +5,10 @@ import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
-import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
+import com.github.dockerjava.zerodep.ZerodepDockerHttpClient;
 import com.distributedlab.labapi.model.ServiceInfo;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +30,12 @@ public class LabDockerClient {
             .withDockerHost(dockerSocket)
             .build();
     DockerHttpClient httpClient =
-        new ApacheDockerHttpClient.Builder().dockerHost(config.getDockerHost()).build();
+        new ZerodepDockerHttpClient.Builder()
+            .dockerHost(config.getDockerHost())
+            .sslConfig(config.getSSLConfig())
+            .connectionTimeout(Duration.ofSeconds(2))
+            .responseTimeout(Duration.ofSeconds(5))
+            .build();
     this.dockerClient = DockerClientImpl.getInstance(config, httpClient);
     log.info("Docker client initialized with socket: {}", dockerSocket);
   }

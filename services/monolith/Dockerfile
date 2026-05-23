@@ -10,8 +10,6 @@ COPY services/payment-service/pom.xml services/payment-service/
 COPY services/_template/pom.xml services/_template/
 COPY services/kv-store/pom.xml services/kv-store/
 
-RUN mvn -pl services/monolith -am dependency:go-offline -B
-
 COPY services/monolith/src services/monolith/src
 RUN mvn -pl services/monolith -am package -DskipTests -B -Dcheckstyle.skip=true
 
@@ -25,7 +23,7 @@ COPY --from=builder /build/services/monolith/target/*.jar service.jar
 COPY --from=builder /build/opentelemetry-javaagent.jar opentelemetry-javaagent.jar
 
 ENV JAVA_TOOL_OPTIONS="-javaagent:/app/opentelemetry-javaagent.jar"
-ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
 ENV OTEL_RESOURCE_ATTRIBUTES=service.name=monolith
 ENV OTEL_TRACES_EXPORTER=otlp
 ENV OTEL_METRICS_EXPORTER=otlp

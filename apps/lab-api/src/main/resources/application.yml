@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: lab-api
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/musiccorp}
+    username: ${SPRING_DATASOURCE_USERNAME:distributedlab}
+    password: ${SPRING_DATASOURCE_PASSWORD:distributedlab}
   data:
     redis:
       host: redis
@@ -28,7 +32,7 @@ management:
 otel:
   exporter:
     otlp:
-      endpoint: http://otel-collector:4317
+      endpoint: http://otel-collector:4318
   resource:
     attributes:
       service.name: lab-api
@@ -42,4 +46,5 @@ docker:
 
 logging:
   pattern:
-    console: '{"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}","level":"%level","logger":"%logger{36}","message":"%msg","traceId":"%X{traceId:-}","spanId":"%X{spanId:-}"}%n'
+    console: >-
+      {"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}","level":"%level","logger":"%logger{36}","message":"%msg","traceId":"%X{traceId:-}","spanId":"%X{spanId:-}"}%n

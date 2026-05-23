@@ -9,7 +9,7 @@ and communication protocol trade-offs in a microservices environment.
 
 - DistributedLab platform running via `docker compose up`
 - Kafka broker accessible at `kafka:9092`
-- OpenTelemetry collector running at `otel-collector:4317`
+- OpenTelemetry collector OTLP HTTP endpoint running at `otel-collector:4318`
 
 ## Scenarios
 

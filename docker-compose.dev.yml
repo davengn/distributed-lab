@@ -8,8 +8,8 @@ services:
       - ./apps/control-panel/src:/app/src
       - ./apps/control-panel/public:/app/public
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3001
-      - NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
+      - NEXT_PUBLIC_API_URL=http://localhost:${LAB_API_PORT:-3001}
+      - NEXT_PUBLIC_WS_URL=ws://localhost:${LAB_API_PORT:-3001}/ws
       - WATCHPACK_POLLING=true
     command: ["npm", "run", "dev"]
 
@@ -17,6 +17,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=lab-api
     ports:
       - "${LAB_API_PORT:-3001}:3001"
       - "5005:5005"

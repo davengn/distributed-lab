@@ -7,8 +7,8 @@ services:
     ports:
       - "${CONTROL_PANEL_PORT:-3000}:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3001
-      - NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
+      - NEXT_PUBLIC_API_URL=http://localhost:${LAB_API_PORT:-3001}
+      - NEXT_PUBLIC_WS_URL=ws://localhost:${LAB_API_PORT:-3001}/ws
     depends_on:
       lab-api:
         condition: service_healthy
@@ -26,16 +26,25 @@ services:
     ports:
       - "${LAB_API_PORT:-3001}:3001"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - "${DOCKER_SOCKET_PATH:-/var/run/docker.sock}:/var/run/docker.sock"
     depends_on:
       redis:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
       toxiproxy:
+        condition: service_started
+      otel-collector:
         condition: service_started
     environment:
       - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/musiccorp
+      - SPRING_DATASOURCE_USERNAME=distributedlab
+      - SPRING_DATASOURCE_PASSWORD=distributedlab
       - TOXIPROXY_HOST=toxiproxy
       - DOCKER_SOCKET=unix:///var/run/docker.sock
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=lab-api
     mem_limit: ${LAB_API_MEMORY:-1024}m
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3001/actuator/health"]
@@ -52,11 +61,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      otel-collector:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/musiccorp
       - SPRING_DATASOURCE_USERNAME=distributedlab
       - SPRING_DATASOURCE_PASSWORD=distributedlab
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
       - OTEL_RESOURCE_ATTRIBUTES=service.name=monolith
     mem_limit: ${MONOLITH_MEMORY:-1024}m
     healthcheck:
@@ -160,7 +171,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_SERVER_ROOT_URL=http://localhost:3002/grafana
+      - GF_SERVER_ROOT_URL=http://localhost:${GRAFANA_PORT:-3002}/grafana
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     volumes:
       - ./infra/observability/grafana/provisioning:/etc/grafana/provisioning
