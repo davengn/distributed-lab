@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DistributedLab</title>
+<style>
+/* ── Variables ────────────────────────────────── */
+:root {
+  --canvas-default: #ffffff;
+  --canvas-subtle: #f6f8fa;
+  --canvas-inset: #eaeef2;
+  --fg-default: #1f2328;
+  --fg-muted: #656d76;
+  --border-default: #d0d7de;
+  --border-muted: #d8dee4;
+  --border-subtle: #eaeef2;
+  --accent-fg: #0969da;
+  --accent-emphasis: #0550ae;
+  --accent-subtle: #ddf4ff;
+  --success-fg: #1a7f37;
+  --success-emphasis: #1f883d;
+  --success-subtle: #dafbe1;
+  --danger-fg: #cf222e;
+  --danger-subtle: #ffebe9;
+  --attention-fg: #9a6700;
+  --attention-subtle: #fff8c5;
+  --done-fg: #8250df;
+  --done-subtle: #fbefff;
+  --neutral-muted: #eaeef2;
+  --header-bg: #ffffff;
+  --sidebar-bg: #f6f8fa;
+  --btn-bg: #f6f8fa;
+  --btn-border: #d0d7de;
+  --btn-hover: #e9ecef;
+  --progress-bg: #eaeef2;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+[data-theme="dark"] {
+  --canvas-default: #0d1117;
+  --canvas-subtle: #161b22;
+  --canvas-inset: #1c2128;
+  --fg-default: #e6edf3;
+  --fg-muted: #8b949e;
+  --border-default: #30363d;
+  --border-muted: #21262d;
+  --border-subtle: #1c2128;
+  --accent-fg: #58a6ff;
+  --accent-emphasis: #1f6feb;
+  --accent-subtle: #1c2d41;
+  --success-fg: #3fb950;
+  --success-emphasis: #238636;
+  --success-subtle: #1a3028;
+  --danger-fg: #f85149;
+  --danger-subtle: #3d1a1a;
+  --attention-fg: #d29922;
+  --attention-subtle: #3d2e00;
+  --done-fg: #bc8cff;
+  --done-subtle: #2a1f47;
+  --neutral-muted: #30363d;
+  --header-bg: #161b22;
+  --sidebar-bg: #161b22;
+  --btn-bg: #21262d;
+  --btn-border: #30363d;
+  --btn-hover: #30363d;
+  --progress-bg: #21262d;
+}
+
+/* ── Reset ────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); font-size: 14px; line-height: 1.5; color: var(--fg-default); background: var(--canvas-default); }
+a { color: var(--accent-fg); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { font-family: inherit; font-size: inherit; cursor: pointer; }
+table { border-collapse: collapse; width: 100%; }
+
+/* ── Layout ───────────────────────────────────── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+.sidebar { width: 240px; background: var(--sidebar-bg); border-right: 1px solid var(--border-default); display: flex; flex-direction: column; flex-shrink: 0; transition: width 200ms ease; z-index: 10; }
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.topbar { height: 48px; background: var(--header-bg); border-bottom: 1px solid var(--border-default); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; }
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── Sidebar ──────────────────────────────────── */
+.sidebar-header { padding: 16px 16px 12px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-default); }
+.sidebar-header svg { color: var(--fg-default); flex-shrink: 0; }
+.sidebar-logo { font-size: 14px; font-weight: 600; color: var(--fg-default); white-space: nowrap; overflow: hidden; }
+.sidebar-nav { flex: 1; padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: 6px; color: var(--fg-muted); font-size: 14px; cursor: pointer; transition: background 80ms ease; text-decoration: none; }
+.nav-item:hover { background: var(--neutral-muted); color: var(--fg-default); text-decoration: none; }
+.nav-item.active { background: var(--neutral-muted); color: var(--fg-default); font-weight: 600; }
+.nav-item svg { flex-shrink: 0; }
+.sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border-default); display: flex; flex-direction: column; gap: 8px; }
+.theme-toggle { display: flex; align-items: center; gap: 8px; background: none; border: none; color: var(--fg-muted); font-size: 12px; padding: 6px 8px; border-radius: 6px; transition: background 80ms ease; }
+.theme-toggle:hover { background: var(--neutral-muted); color: var(--fg-default); }
+.version-badge { font-family: var(--font-mono); font-size: 11px; color: var(--fg-muted); padding: 2px 8px; background: var(--canvas-default); border: 1px solid var(--border-default); border-radius: 4px; display: inline-block; }
+
+/* ── Topbar ───────────────────────────────────── */
+.topbar-title { font-size: 14px; font-weight: 600; }
+.env-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--fg-muted); }
+.env-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success-fg); display: inline-block; }
+.env-dot.stopped { background: var(--danger-fg); }
+
+/* ── Metric cards ─────────────────────────────── */
+.metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.metric-card { background: var(--canvas-default); border: 1px solid var(--border-default); border-radius: 6px; padding: 16px; }
+.metric-label { font-size: 12px; color: var(--fg-muted); font-weight: 500; margin-bottom: 4px; }
+.metric-value { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; margin-bottom: 8px; }
+.metric-sub { font-size: 12px; color: var(--fg-muted); }
+.sparkline { width: 100%; height: 28px; }
+.sparkline polyline { fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── Panels ───────────────────────────────────── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.panel { background: var(--canvas-default); border: 1px solid var(--border-default); border-radius: 6px; overflow: hidden; }
+.panel + .panel { margin-top: 16px; }
+.panel-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--canvas-subtle); border-bottom: 1px solid var(--border-default); }
+.panel-title { font-size: 14px; font-weight: 600; }
+.panel-body { padding: 16px; }
+
+/* ── Status pills ─────────────────────────────── */
+.status-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; }
+.status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+.status-running { color: var(--success-fg); background: var(--success-subtle); }
+.status-running::before { background: var(--success-fg); }
+.status-degraded { color: var(--attention-fg); background: var(--attention-subtle); }
+.status-degraded::before { background: var(--attention-fg); }
+.status-stopped { color: var(--fg-muted); background: var(--neutral-muted); }
+.status-stopped::before { background: var(--fg-muted); }
+.status-open { color: var(--danger-fg); background: var(--danger-subtle); }
+.status-open::before { background: var(--danger-fg); }
+.status-closed { color: var(--success-fg); background: var(--success-subtle); }
+.status-closed::before { background: var(--success-fg); }
+.status-completed { color: var(--done-fg); background: var(--done-subtle); }
+.status-completed::before { background: var(--done-fg); }
+
+/* ── Service health cards ─────────────────────── */
+.service-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.svc-card { border: 1px solid var(--border-default); border-radius: 6px; padding: 12px; transition: border-color 80ms ease; }
+.svc-card:hover { border-color: var(--accent-fg); }
+.svc-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.svc-name { font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+.svc-meta { font-size: 12px; color: var(--fg-muted); margin-bottom: 10px; }
+.progress-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.progress-label { font-size: 11px; color: var(--fg-muted); width: 28px; font-family: var(--font-mono); }
+.progress-bar { flex: 1; height: 6px; background: var(--progress-bg); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 200ms ease; }
+.progress-fill.green { background: var(--success-fg); }
+.progress-fill.amber { background: var(--attention-fg); }
+.progress-fill.red { background: var(--danger-fg); }
+.progress-val { font-size: 11px; font-family: var(--font-mono); color: var(--fg-muted); width: 30px; text-align: right; }
+
+/* ── Data tables ──────────────────────────────── */
+.data-table { width: 100%; }
+.data-table th { font-size: 12px; font-weight: 500; color: var(--fg-muted); text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border-default); }
+.data-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-subtle); font-size: 13px; vertical-align: middle; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table .mono { font-family: var(--font-mono); font-size: 12px; }
+.data-table .truncate { max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Events feed ──────────────────────────────── */
+.events-feed { display: flex; flex-direction: column; }
+.event-item { display: flex; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--border-subtle); font-size: 13px; }
+.event-item:last-child { border-bottom: none; }
+.event-time { font-family: var(--font-mono); font-size: 12px; color: var(--fg-muted); flex-shrink: 0; width: 64px; }
+.event-icon { flex-shrink: 0; width: 16px; text-align: center; }
+.event-text { color: var(--fg-default); }
+
+/* ── Module cards (Labs) ──────────────────────── */
+.modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.module-card { border: 1px solid var(--border-default); border-radius: 6px; padding: 16px; cursor: pointer; transition: border-color 80ms ease; }
+.module-card:hover { border-color: var(--accent-fg); }
+.module-card.selected { border-color: var(--accent-fg); box-shadow: 0 0 0 3px var(--accent-subtle); }
+.module-card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.module-icon { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+.m1 .module-icon { background: #E1F5EE; color: #0F6E56; }
+.m2 .module-icon { background: #E6F1FB; color: #185FA5; }
+.m3 .module-icon { background: #FAECE7; color: #993C1D; }
+.m4 .module-icon { background: #FAEEDA; color: #854F0B; }
+.m5 .module-icon { background: #EEEDFE; color: #534AB7; }
+[data-theme="dark"] .m1 .module-icon { background: #0F3D2E; color: #3fb950; }
+[data-theme="dark"] .m2 .module-icon { background: #0D2942; color: #58a6ff; }
+[data-theme="dark"] .m3 .module-icon { background: #3D1F14; color: #f0883e; }
+[data-theme="dark"] .m4 .module-icon { background: #3D2E00; color: #d29922; }
+[data-theme="dark"] .m5 .module-icon { background: #2A1F47; color: #bc8cff; }
+.module-num { font-family: var(--font-mono); font-size: 11px; color: var(--fg-muted); }
+.module-name { font-size: 14px; font-weight: 600; }
+.module-desc { font-size: 13px; color: var(--fg-muted); margin-bottom: 12px; }
+.module-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.module-tag { font-size: 11px; font-family: var(--font-mono); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border-default); color: var(--fg-muted); background: var(--canvas-subtle); }
+
+/* ── Module detail ────────────────────────────── */
+.module-detail { background: var(--canvas-default); border: 1px solid var(--border-default); border-radius: 6px; overflow: hidden; }
+.detail-tabs { display: flex; border-bottom: 1px solid var(--border-default); background: var(--canvas-subtle); }
+.detail-tab { padding: 10px 16px; font-size: 13px; color: var(--fg-muted); border-bottom: 2px solid transparent; cursor: pointer; transition: color 80ms ease; }
+.detail-tab:hover { color: var(--fg-default); }
+.detail-tab.active { color: var(--accent-fg); border-bottom-color: var(--accent-fg); font-weight: 500; }
+.detail-body { padding: 20px 24px; }
+.feature-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); }
+.feature-item:last-child { border-bottom: none; }
+.feature-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+.feature-desc { font-size: 13px; color: var(--fg-muted); line-height: 1.5; }
+
+/* ── Chaos form ───────────────────────────────── */
+.form-group { margin-bottom: 12px; }
+.form-label { display: block; font-size: 12px; font-weight: 500; color: var(--fg-muted); margin-bottom: 4px; }
+.form-select, .form-input { width: 100%; padding: 5px 12px; border: 1px solid var(--border-default); border-radius: 6px; background: var(--canvas-default); color: var(--fg-default); font-size: 14px; font-family: var(--font-body); }
+.form-select:focus, .form-input:focus { outline: none; border-color: var(--accent-fg); box-shadow: 0 0 0 3px var(--accent-subtle); }
+.btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 5px 16px; background: var(--success-emphasis); color: #fff; border: 1px solid rgba(31,35,40,0.15); border-radius: 6px; font-size: 14px; font-weight: 500; box-shadow: 0 1px 0 rgba(31,35,40,0.1); transition: background 80ms ease; }
+.btn-primary:hover { background: var(--success-fg); }
+.btn-danger { display: inline-flex; align-items: center; gap: 6px; padding: 5px 16px; background: var(--canvas-default); color: var(--danger-fg); border: 1px solid var(--border-default); border-radius: 6px; font-size: 14px; font-weight: 500; transition: all 80ms ease; }
+.btn-danger:hover { background: var(--danger-fg); color: #fff; border-color: var(--danger-fg); }
+
+/* ── Circuit breaker cards ────────────────────── */
+.cb-card { border: 1px solid var(--border-default); border-radius: 6px; padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+.cb-card:last-child { margin-bottom: 0; }
+.cb-info { flex: 1; }
+.cb-name { font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
+.cb-stats { font-size: 12px; color: var(--fg-muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+/* ── Topology SVG ─────────────────────────────── */
+.topo-container { padding: 24px; overflow-x: auto; }
+.topo-svg { width: 100%; max-width: 800px; margin: 0 auto; display: block; }
+.topo-node rect { fill: var(--canvas-default); stroke: var(--border-default); stroke-width: 1px; rx: 6; transition: stroke 80ms ease; }
+.topo-node:hover rect { stroke: var(--accent-fg); }
+.topo-node text { fill: var(--fg-default); font-family: var(--font-mono); font-size: 11px; text-anchor: middle; dominant-baseline: middle; }
+.topo-node .node-sub { fill: var(--fg-muted); font-size: 9px; }
+.topo-line { stroke: var(--border-default); stroke-width: 1.5; fill: none; }
+.topo-line.degraded { stroke: var(--attention-fg); stroke-dasharray: 4 3; }
+.topo-line.failed { stroke: var(--danger-fg); stroke-dasharray: 4 3; }
+.topo-dot { r: 4; }
+
+/* ── Toast ────────────────────────────────────── */
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
+.toast { padding: 10px 16px; border-radius: 6px; font-size: 13px; background: var(--canvas-subtle); border: 1px solid var(--border-default); box-shadow: 0 4px 12px rgba(0,0,0,0.1); animation: slideIn 200ms ease-out; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 1100px) {
+  .metrics-row { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+}
+@media (max-width: 860px) {
+  .sidebar { width: 56px; }
+  .sidebar-logo, .nav-label, .theme-label, .version-badge { display: none; }
+  .sidebar-header { padding: 12px; justify-content: center; }
+  .nav-item { justify-content: center; padding: 10px; }
+  .sidebar-footer { align-items: center; padding: 10px 8px; }
+  .theme-toggle { justify-content: center; }
+  .content { padding: 16px; }
+  .modules-grid { grid-template-columns: 1fr; }
+  .metrics-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .metrics-row { grid-template-columns: 1fr; }
+  .service-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ─── Sidebar ──────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    <span class="sidebar-logo">DistributedLab</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-item active" data-screen="dashboard">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item" data-screen="labs">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6v7l5 8H4l5-8V3z"/><line x1="9" y1="3" x2="15" y2="3"/></svg>
+      <span class="nav-label">Labs</span>
+    </a>
+    <a class="nav-item" data-screen="chaos">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span class="nav-label">Chaos</span>
+    </a>
+    <a class="nav-item" data-screen="registry">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="6" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="18" r="2"/><line x1="5.5" y1="7.5" x2="9.5" y2="10.5"/><line x1="18.5" y1="7.5" x2="14.5" y2="10.5"/><line x1="5.5" y1="16.5" x2="9.5" y2="13.5"/><line x1="18.5" y1="16.5" x2="14.5" y2="13.5"/></svg>
+      <span class="nav-label">Registry</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="theme-toggle" id="themeToggle">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <span class="theme-label">Dark mode</span>
+    </button>
+    <span class="version-badge">v0.1.0-alpha</span>
+  </div>
+</aside>
+
+<!-- ─── Main ─────────────────────────────────── -->
+<div class="main">
+  <header class="topbar">
+    <h1 class="topbar-title" id="pageTitle">Dashboard</h1>
+    <div class="env-badge"><span class="env-dot"></span> Environment running</div>
+  </header>
+
+  <div class="content">
+
+    <!-- ═══════ Dashboard ═══════ -->
+    <div class="screen active" id="screen-dashboard">
+
+      <!-- Metric cards -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-label">Services</div>
+          <div class="metric-value">6 <span style="font-size:14px;color:var(--fg-muted)">/ 7</span></div>
+          <svg class="sparkline" viewBox="0 0 100 28"><polyline points="0,18 10,16 20,14 30,15 40,12 50,10 60,11 70,9 80,8 90,9 100,7" stroke="var(--success-fg)" /></svg>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Active Experiments</div>
+          <div class="metric-value">4</div>
+          <svg class="sparkline" viewBox="0 0 100 28"><polyline points="0,22 10,20 20,18 30,15 40,14 50,12 60,10 70,8 80,7 90,6 100,5" stroke="var(--accent-fg)" /></svg>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">System Health</div>
+          <div class="metric-value">86%</div>
+          <svg class="sparkline" viewBox="0 0 100 28"><polyline points="0,6 10,7 20,8 30,6 40,9 50,10 60,12 70,14 80,11 90,13 100,15" stroke="var(--attention-fg)" /></svg>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Uptime</div>
+          <div class="metric-value">2d 14h</div>
+          <div class="metric-sub">Since last <code style="font-family:var(--font-mono);font-size:12px;background:var(--canvas-subtle);padding:1px 4px;border-radius:3px">docker compose up</code></div>
+        </div>
+      </div>
+
+      <!-- Service health + Experiments -->
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Service Health</span></div>
+          <div class="panel-body">
+            <div class="service-grid">
+              <div class="svc-card">
+                <div class="svc-card-head"><span class="svc-name">monolith</span><span class="status-pill status-running">running</span></div>
+                <div class="svc-meta">MusicCorp Monolith &middot; v1.2.0 &middot; :8080</div>
+                <div class="progress-row"><span class="progress-label">CPU</span><div class="progress-bar"><div class="progress-fill green" style="width:34%"></div></div><span class="progress-val">34%</span></div>
+                <div class="progress-row"><span class="progress-label">MEM</span><div class="progress-bar"><div class="progress-fill green" style="width:62%"></div></div><span class="progress-val">62%</span></div>
+              </div>
+              <div class="svc-card">
+                <div class="svc-card-head"><span class="svc-name">catalog</span><span class="status-pill status-running">running</span></div>
+                <div class="svc-meta">Catalog Service &middot; v0.3.1 &middot; :8081</div>
+                <div class="progress-row"><span class="progress-label">CPU</span><div class="progress-bar"><div class="progress-fill green" style="width:12%"></div></div><span class="progress-val">12%</span></div>
+                <div class="progress-row"><span class="progress-label">MEM</span><div class="progress-bar"><div class="progress-fill green" style="width:28%"></div></div><span class="progress-val">28%</span></div>
+              </div>
+              <div class="svc-card">
+                <div class="svc-card-head"><span class="svc-name">order</span><span class="status-pill status-running">running</span></div>
+                <div class="svc-meta">Order Service &middot; v0.2.0 &middot; :8082</div>
+                <div class="progress-row"><span class="progress-label">CPU</span><div class="progress-bar"><div class="progress-fill green" style="width:8%"></div></div><span class="progress-val">8%</span></div>
+                <div class="progress-row"><span class="progress-label">MEM</span><div class="progress-bar"><div class="progress-fill green" style="width:19%"></div></div><span class="progress-val">19%</span></div>
+              </div>
+              <div class="svc-card">
+                <div class="svc-card-head"><span class="svc-name">payment</span><span class="status-pill status-degraded">degraded</span></div>
+                <div class="svc-meta">Payment Service &middot; v0.1.5 &middot; :8083</div>
+                <div class="progress-row"><span class="progress-label">CPU</span><div class="progress-bar"><div class="progress-fill amber" style="width:45%"></div></div><span class="progress-val">45%</span></div>
+                <div class="progress-row"><span class="progress-label">MEM</span><div class="progress-bar"><div class="progress-fill amber" style="width:71%"></div></div><span class="progress-val">71%</span></div>
+              </div>
+              <div class="svc-card">
+                <div class="svc-card-head"><span class="svc-name">gateway</span><span class="status-pill status-running">running</span></div>
+                <div class="svc-meta">API Gateway (Envoy) &middot; v1.0.0 &middot; :8000</div>
+                <div class="progress-row"><span class="progress-label">CPU</span><div class="progress-bar"><div class="progress-fill green" style="width:5%"></div></div><span class="progress-val">5%</span></div>
+                <div class="progress-row"><span class="progress-label">MEM</span><div class="progress-bar"><div class="progress-fill green" style="width:14%"></div></div><span class="progress-val">14%</span></div>
+              </div>
+              <div class="svc-card">
+                <div class="svc-card-head"><span class="svc-name">kafka</span><span class="status-pill status-running">running</span></div>
+                <div class="svc-meta">Apache Kafka &middot; v7.5.0 &middot; :9092</div>
+                <div class="progress-row"><span class="progress-label">CPU</span><div class="progress-bar"><div class="progress-fill green" style="width:22%"></div></div><span class="progress-val">22%</span></div>
+                <div class="progress-row"><span class="progress-label">MEM</span><div class="progress-bar"><div class="progress-fill green" style="width:48%"></div></div><span class="progress-val">48%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Active Experiments</span></div>
+          <div class="panel-body" style="padding:0">
+            <table class="data-table">
+              <thead><tr><th>ID</th><th>Experiment</th><th>Module</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">EXP-001</td><td class="truncate">Strangler Fig: /api/catalog &rarr; catalog-service</td><td>Migration</td><td><span class="status-pill status-running">Running</span></td></tr>
+                <tr><td class="mono">EXP-002</td><td class="truncate">Circuit breaker test: payment-service</td><td>Resiliency</td><td><span class="status-pill status-running">Running</span></td></tr>
+                <tr><td class="mono">EXP-003</td><td class="truncate">Replication lag: 250ms artificial delay</td><td>Consistency</td><td><span class="status-pill status-running">Running</span></td></tr>
+                <tr><td class="mono">EXP-004</td><td class="truncate">CAP partition: node-2 isolated</td><td>Consistency</td><td><span class="status-pill status-completed">Done</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent events -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Recent Events</span></div>
+        <div class="events-feed">
+          <div class="event-item"><span class="event-time">14:32</span><span class="event-icon" style="color:var(--success-fg)">&#9654;</span><span class="event-text">Experiment <strong>EXP-001</strong>: Strangler Fig redirect active on <code>/api/catalog</code></span></div>
+          <div class="event-item"><span class="event-time">14:23</span><span class="event-icon" style="color:var(--accent-fg)">&#9654;</span><span class="event-text">Experiment started: Strangler Fig &mdash; redirecting <code>/api/catalog</code> &rarr; <code>catalog-service</code></span></div>
+          <div class="event-item"><span class="event-time">14:18</span><span class="event-icon" style="color:var(--danger-fg)">&#9888;</span><span class="event-text">Circuit breaker <strong>OPEN</strong>: payment-service (3 consecutive failures in 60s)</span></div>
+          <div class="event-item"><span class="event-time">14:18</span><span class="event-icon" style="color:var(--attention-fg)">&#9654;</span><span class="event-text">Fault injected: <strong>+200ms latency</strong> on payment-service</span></div>
+          <div class="event-item"><span class="event-time">14:05</span><span class="event-icon" style="color:var(--attention-fg)">&#9654;</span><span class="event-text">Fault injected: <strong>5% packet loss</strong> on order-service</span></div>
+          <div class="event-item"><span class="event-time">13:52</span><span class="event-icon" style="color:var(--accent-fg)">&#9654;</span><span class="event-text">Experiment started: Replication lag simulation &mdash; 250ms artificial delay</span></div>
+          <div class="event-item"><span class="event-time">13:30</span><span class="event-icon" style="color:var(--done-fg)">&#10003;</span><span class="event-text">Experiment completed: CAP partition test (<strong>EXP-004</strong>) &mdash; results available</span></div>
+          <div class="event-item"><span class="event-time">12:15</span><span class="event-icon" style="color:var(--success-fg)">&#9654;</span><span class="event-text">Environment started: <code>docker compose up</code> &mdash; 7 containers running</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ Labs ═══════ -->
+    <div class="screen" id="screen-labs">
+      <div class="modules-grid">
+
+        <div class="module-card m1" data-module="1">
+          <div class="module-card-head">
+            <div class="module-icon">&#8693;</div>
+            <div><div class="module-name">Migration &amp; Decomposition</div><div class="module-num">Module 01</div></div>
+          </div>
+          <div class="module-desc">Strangler Fig proxy, Parallel Run comparator, and feature toggle dashboard for safe monolith decomposition.</div>
+          <div class="module-tags"><span class="module-tag">Strangler Fig</span><span class="module-tag">Parallel Run</span><span class="module-tag">Feature Toggles</span></div>
+        </div>
+
+        <div class="module-card m2" data-module="2">
+          <div class="module-card-head">
+            <div class="module-icon">&#9729;</div>
+            <div><div class="module-name">Distributed Data &amp; Consistency</div><div class="module-num">Module 02</div></div>
+          </div>
+          <div class="module-desc">CAP theorem visualizer, replication lag simulator, multi-model explorer, and CDC pipeline.</div>
+          <div class="module-tags"><span class="module-tag">CAP</span><span class="module-tag">Replication</span><span class="module-tag">Event Sourcing</span></div>
+        </div>
+
+        <div class="module-card m3" data-module="3">
+          <div class="module-card-head">
+            <div class="module-icon">&#9889;</div>
+            <div><div class="module-name">Resiliency &amp; Chaos</div><div class="module-num">Module 03</div></div>
+          </div>
+          <div class="module-desc">Chaos engineering panel, circuit breaker playground, and cascading failure visualizer.</div>
+          <div class="module-tags"><span class="module-tag">Chaos</span><span class="module-tag">Circuit Breaker</span><span class="module-tag">Bulkhead</span></div>
+        </div>
+
+        <div class="module-card m4" data-module="4">
+          <div class="module-card-head">
+            <div class="module-icon">&#128279;</div>
+            <div><div class="module-name">Workflow &amp; Communication</div><div class="module-num">Module 04</div></div>
+          </div>
+          <div class="module-desc">Saga visualizer, idempotency tester, communication style lab, and Pact contract testing.</div>
+          <div class="module-tags"><span class="module-tag">Saga</span><span class="module-tag">Idempotency</span><span class="module-tag">Messaging</span></div>
+        </div>
+
+        <div class="module-card m5" data-module="5">
+          <div class="module-card-head">
+            <div class="module-icon">&#128301;</div>
+            <div><div class="module-name">Observability Suite</div><div class="module-num">Module 05</div></div>
+          </div>
+          <div class="module-desc">Pre-configured metrics, distributed tracing, and a humane service registry. The paved road for all labs.</div>
+          <div class="module-tags"><span class="module-tag">Metrics</span><span class="module-tag">Tracing</span><span class="module-tag">Registry</span></div>
+        </div>
+      </div>
+
+      <!-- Module detail (shown on click) -->
+      <div class="module-detail" id="moduleDetail" style="display:none">
+        <div class="detail-tabs">
+          <span class="detail-tab active" data-tab="overview">Overview</span>
+          <span class="detail-tab" data-tab="experiments">Experiments</span>
+          <span class="detail-tab" data-tab="guide">Guide</span>
+        </div>
+        <div class="detail-body" id="detailBody">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ Chaos ═══════ -->
+    <div class="screen" id="screen-chaos">
+      <div class="two-col">
+        <!-- Fault injection form -->
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Fault Injection</span></div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">Fault type</label>
+              <select class="form-select" id="faultType">
+                <option value="latency">Latency injection</option>
+                <option value="packet_loss">Packet loss</option>
+                <option value="kill">Kill container</option>
+                <option value="memory">Memory exhaustion</option>
+                <option value="partition">Network partition</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Target service</label>
+              <select class="form-select" id="faultTarget">
+                <option value="monolith">monolith (:8080)</option>
+                <option value="catalog-service">catalog-service (:8081)</option>
+                <option value="order-service">order-service (:8082)</option>
+                <option value="payment-service">payment-service (:8083)</option>
+                <option value="api-gateway">api-gateway (:8000)</option>
+                <option value="kafka">kafka (:9092)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Duration (seconds)</label>
+              <input class="form-input" type="number" value="60" min="10" max="600" id="faultDuration">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Magnitude</label>
+              <input class="form-input" type="text" value="200ms" id="faultMagnitude" placeholder="e.g. 200ms, 5%, 512MB">
+            </div>
+            <button class="btn-primary" onclick="injectFault()">Inject Fault</button>
+          </div>
+        </div>
+
+        <!-- Active faults -->
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Active Faults</span><span style="font-size:12px;color:var(--fg-muted)" id="faultCount">2 active</span></div>
+          <div class="panel-body" style="padding:0">
+            <table class="data-table" id="faultsTable">
+              <thead><tr><th>ID</th><th>Type</th><th>Target</th><th>Magnitude</th><th></th></tr></thead>
+              <tbody>
+                <tr><td class="mono">FLT-001</td><td>Latency</td><td class="mono">payment-service</td><td class="mono">+200ms</td><td><button class="btn-danger" style="padding:2px 10px;font-size:12px" onclick="this.closest('tr').remove()">Stop</button></td></tr>
+                <tr><td class="mono">FLT-002</td><td>Packet loss</td><td class="mono">order-service</td><td class="mono">5%</td><td><button class="btn-danger" style="padding:2px 10px;font-size:12px" onclick="this.closest('tr').remove()">Stop</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Circuit breakers + Dependency map -->
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Circuit Breakers</span></div>
+          <div class="panel-body">
+            <div class="cb-card">
+              <span class="status-pill status-open">Open</span>
+              <div class="cb-info"><div class="cb-name">payment-service</div><div class="cb-stats">3 failures &middot; success rate 12% &middot; threshold 50%</div></div>
+            </div>
+            <div class="cb-card">
+              <span class="status-pill status-closed">Closed</span>
+              <div class="cb-info"><div class="cb-name">order-service</div><div class="cb-stats">0 failures &middot; success rate 99.2% &middot; threshold 50%</div></div>
+            </div>
+            <div class="cb-card">
+              <span class="status-pill status-closed">Closed</span>
+              <div class="cb-info"><div class="cb-name">catalog-service</div><div class="cb-stats">0 failures &middot; success rate 99.8% &middot; threshold 50%</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Cascading Failure Map</span></div>
+          <div class="topo-container">
+            <svg class="topo-svg" viewBox="0 0 600 280">
+              <!-- Connections -->
+              <line class="topo-line" x1="300" y1="55" x2="120" y2="130"/>
+              <line class="topo-line" x1="300" y1="55" x2="300" y2="130"/>
+              <line class="topo-line degraded" x1="300" y1="55" x2="480" y2="130"/>
+              <line class="topo-line" x1="120" y1="175" x2="180" y2="240"/>
+              <line class="topo-line" x1="300" y1="175" x2="180" y2="240"/>
+              <line class="topo-line failed" x1="480" y1="175" x2="480" y2="240"/>
+
+              <!-- Nodes -->
+              <g class="topo-node" transform="translate(300,35)"><rect x="-60" y="-20" width="120" height="40"/><text y="-4">monolith</text><text class="node-sub" y="10">:8080</text><circle class="topo-dot" cx="48" cy="-10" fill="var(--success-fg)"/></g>
+              <g class="topo-node" transform="translate(120,150)"><rect x="-65" y="-20" width="130" height="40"/><text y="-4">catalog-service</text><text class="node-sub" y="10">:8081</text><circle class="topo-dot" cx="53" cy="-10" fill="var(--success-fg)"/></g>
+              <g class="topo-node" transform="translate(300,150)"><rect x="-60" y="-20" width="120" height="40"/><text y="-4">order-service</text><text class="node-sub" y="10">:8082</text><circle class="topo-dot" cx="48" cy="-10" fill="var(--success-fg)"/></g>
+              <g class="topo-node" transform="translate(480,150)"><rect x="-65" y="-20" width="130" height="40"/><text y="-4">payment-service</text><text class="node-sub" y="10">:8083</text><circle class="topo-dot" cx="53" cy="-10" fill="var(--attention-fg)"/></g>
+              <g class="topo-node" transform="translate(180,255)"><rect x="-50" y="-15" width="100" height="30"/><text y="1">PostgreSQL</text><circle class="topo-dot" cx="38" cy="-3" fill="var(--success-fg)"/></g>
+              <g class="topo-node" transform="translate(480,255)"><rect x="-35" y="-15" width="70" height="30"/><text y="1">Redis</text><circle class="topo-dot" cx="23" cy="-3" fill="var(--success-fg)"/></g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ Registry ═══════ -->
+    <div class="screen" id="screen-registry">
+      <!-- Topology -->
+      <div class="panel" style="margin-bottom:24px">
+        <div class="panel-header"><span class="panel-title">Service Topology</span></div>
+        <div class="topo-container">
+          <svg class="topo-svg" viewBox="0 0 800 440">
+            <!-- Layer labels -->
+            <text x="20" y="35" fill="var(--fg-muted)" font-size="10" font-family="var(--font-mono)">CONTROL</text>
+            <text x="20" y="115" fill="var(--fg-muted)" font-size="10" font-family="var(--font-mono)">GATEWAY</text>
+            <text x="20" y="205" fill="var(--fg-muted)" font-size="10" font-family="var(--font-mono)">APPLICATION</text>
+            <text x="20" y="315" fill="var(--fg-muted)" font-size="10" font-family="var(--font-mono)">SERVICES</text>
+            <text x="20" y="410" fill="var(--fg-muted)" font-size="10" font-family="var(--font-mono)">DATA</text>
+
+            <!-- Connections -->
+            <line class="topo-line" x1="400" y1="55" x2="400" y2="95"/>
+            <line class="topo-line" x1="400" y1="135" x2="400" y2="185"/>
+            <line class="topo-line" x1="400" y1="225" x2="200" y2="295"/>
+            <line class="topo-line" x1="400" y1="225" x2="400" y2="295"/>
+            <line class="topo-line degraded" x1="400" y1="225" x2="600" y2="295"/>
+            <line class="topo-line" x1="200" y1="335" x2="160" y2="390"/>
+            <line class="topo-line" x1="200" y1="335" x2="320" y2="390"/>
+            <line class="topo-line" x1="400" y1="335" x2="160" y2="390"/>
+            <line class="topo-line" x1="400" y1="335" x2="500" y2="390"/>
+            <line class="topo-line" x1="600" y1="335" x2="680" y2="390"/>
+
+            <!-- Layer: Control -->
+            <g class="topo-node" transform="translate(400,35)"><rect x="-50" y="-18" width="100" height="36"/><text y="-2">lab-api</text><text class="node-sub" y="10">:3001</text><circle class="topo-dot" cx="38" cy="-8" fill="var(--success-fg)"/></g>
+
+            <!-- Layer: Gateway -->
+            <g class="topo-node" transform="translate(400,115)"><rect x="-55" y="-18" width="110" height="36"/><text y="-2">api-gateway</text><text class="node-sub" y="10">:8000</text><circle class="topo-dot" cx="43" cy="-8" fill="var(--success-fg)"/></g>
+
+            <!-- Layer: Application -->
+            <g class="topo-node" transform="translate(400,205)"><rect x="-50" y="-18" width="100" height="36"/><text y="-2">monolith</text><text class="node-sub" y="10">:8080</text><circle class="topo-dot" cx="38" cy="-8" fill="var(--success-fg)"/></g>
+
+            <!-- Layer: Services -->
+            <g class="topo-node" transform="translate(200,315)"><rect x="-65" y="-18" width="130" height="36"/><text y="-2">catalog-service</text><text class="node-sub" y="10">:8081</text><circle class="topo-dot" cx="53" cy="-8" fill="var(--success-fg)"/></g>
+            <g class="topo-node" transform="translate(400,315)"><rect x="-60" y="-18" width="120" height="36"/><text y="-2">order-service</text><text class="node-sub" y="10">:8082</text><circle class="topo-dot" cx="48" cy="-8" fill="var(--success-fg)"/></g>
+            <g class="topo-node" transform="translate(600,315)"><rect x="-65" y="-18" width="130" height="36"/><text y="-2">payment-service</text><text class="node-sub" y="10">:8083</text><circle class="topo-dot" cx="53" cy="-8" fill="var(--attention-fg)"/></g>
+
+            <!-- Layer: Data -->
+            <g class="topo-node" transform="translate(160,410)"><rect x="-50" y="-15" width="100" height="30"/><text y="1">PostgreSQL</text><circle class="topo-dot" cx="38" cy="-3" fill="var(--success-fg)"/></g>
+            <g class="topo-node" transform="translate(320,410)"><rect x="-40" y="-15" width="80" height="30"/><text y="1">MongoDB</text><circle class="topo-dot" cx="28" cy="-3" fill="var(--success-fg)"/></g>
+            <g class="topo-node" transform="translate(500,410)"><rect x="-35" y="-15" width="70" height="30"/><text y="1">Kafka</text><circle class="topo-dot" cx="23" cy="-3" fill="var(--success-fg)"/></g>
+            <g class="topo-node" transform="translate(680,410)"><rect x="-35" y="-15" width="70" height="30"/><text y="1">Redis</text><circle class="topo-dot" cx="23" cy="-3" fill="var(--success-fg)"/></g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Service catalog -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Service Catalog</span></div>
+        <div class="panel-body" style="padding:0;overflow-x:auto">
+          <table class="data-table">
+            <thead><tr><th>Service</th><th>Status</th><th>Version</th><th>Image</th><th>Dependencies</th><th>Port</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">monolith</td><td><span class="status-pill status-running">Running</span></td><td class="mono">v1.2.0</td><td class="mono">spring-boot</td><td style="color:var(--fg-muted)">catalog, order, payment</td><td class="mono">8080</td></tr>
+              <tr><td style="font-weight:600">catalog-service</td><td><span class="status-pill status-running">Running</span></td><td class="mono">v0.3.1</td><td class="mono">spring-boot</td><td style="color:var(--fg-muted)">postgresql, mongodb</td><td class="mono">8081</td></tr>
+              <tr><td style="font-weight:600">order-service</td><td><span class="status-pill status-running">Running</span></td><td class="mono">v0.2.0</td><td class="mono">spring-boot</td><td style="color:var(--fg-muted)">postgresql, kafka</td><td class="mono">8082</td></tr>
+              <tr><td style="font-weight:600">payment-service</td><td><span class="status-pill status-degraded">Degraded</span></td><td class="mono">v0.1.5</td><td class="mono">spring-boot</td><td style="color:var(--fg-muted)">redis</td><td class="mono">8083</td></tr>
+              <tr><td style="font-weight:600">api-gateway</td><td><span class="status-pill status-running">Running</span></td><td class="mono">v1.0.0</td><td class="mono">envoy</td><td style="color:var(--fg-muted)">monolith</td><td class="mono">8000</td></tr>
+              <tr><td style="font-weight:600">lab-api</td><td><span class="status-pill status-running">Running</span></td><td class="mono">v0.4.0</td><td class="mono">spring-boot</td><td style="color:var(--fg-muted)">docker-socket</td><td class="mono">3001</td></tr>
+              <tr><td style="font-weight:600">kafka</td><td><span class="status-pill status-running">Running</span></td><td class="mono">v7.5.0</td><td class="mono">confluent</td><td style="color:var(--fg-muted)">&mdash;</td><td class="mono">9092</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toasts"></div>
+
+<script>
+// ── Module data ─────────────────────────────────
+const moduleData = {
+  1: {
+    name: 'Migration & Decomposition Lab',
+    features: [
+      { name: 'Majestic Monolith template', desc: 'A working "MusicCorp"-style Spring Boot monolith. All data in a single PostgreSQL schema. Clone and incrementally decompose.' },
+      { name: 'Strangler Fig proxy', desc: 'Configurable HTTP proxy (Envoy) where learners redirect routes from the monolith to a new microservice via the control panel.' },
+      { name: 'Parallel Run comparator', desc: 'Fire the same request at both the monolith and the extracted service. Diff the JSON responses side-by-side in the UI.' },
+      { name: 'Feature toggle dashboard', desc: 'Runtime control panel to flip feature flags between old and new implementations without redeployment. Backed by Redis.' },
+    ]
+  },
+  2: {
+    name: 'Distributed Data & Consistency Sandbox',
+    features: [
+      { name: 'CAP theorem visualizer', desc: 'A two-node KV store where the learner manually "cuts" the network link. Live dashboard shows Consistency vs Availability choice.' },
+      { name: 'Replication lag simulator', desc: 'Async leader-follower PostgreSQL replication with a slider for artificial lag. Read-your-writes violations surfaced visually.' },
+      { name: 'Data model A/B explorer', desc: 'Same social-network domain in PostgreSQL, MongoDB, and Neo4j. Compare latency and schema complexity side-by-side.' },
+      { name: 'CDC & event sourcing pipeline', desc: 'Debezium captures changes from PostgreSQL, streams to Kafka, updates Elasticsearch. Pause, replay, and corrupt events.' },
+    ]
+  },
+  3: {
+    name: 'Resiliency & Chaos Console',
+    features: [
+      { name: 'Chaos engineering panel', desc: 'Inject faults into running containers: kill a service, add latency, drop packets, or exhaust memory. Powered by Toxiproxy.' },
+      { name: 'Stability pattern playground', desc: 'Pre-wired circuit breaker (Resilience4j) and bulkhead templates. Configure thresholds and watch the breaker open/close in real time.' },
+      { name: 'Cascading failure visualizer', desc: 'Live dependency graph highlighting degraded or failed services. Shows whether bulkheads contain the blast radius.' },
+    ]
+  },
+  4: {
+    name: 'Workflow & Communication Explorer',
+    features: [
+      { name: 'Saga visualizer', desc: 'Same order-fulfillment in orchestrated and choreographed forms. Real-time map shows messages flowing and where coupling occurs.' },
+      { name: 'Idempotency tester', desc: 'Replay the same POST N times. Verify side effects occur exactly once. Disable the Idempotency-Key and observe double-processing.' },
+      { name: 'Communication style lab', desc: 'REST, gRPC, and Kafka side-by-side for the same interaction. Latency, throughput, and temporal coupling differences under load.' },
+      { name: 'Consumer-driven contract tester', desc: 'Built-in Pact Broker. Define consumer contracts, run verification, and deliberately break them to see CI fail fast.' },
+    ]
+  },
+  5: {
+    name: 'Observability Suite',
+    features: [
+      { name: 'Unified metrics & log aggregator', desc: 'Prometheus scrapes all services. Grafana dashboards pre-built. Loki/Promtail collects structured logs. Zero config.' },
+      { name: 'Distributed tracing dashboard', desc: 'Correlation IDs via OpenTelemetry. Follow a single request across N service hops. Identify the slowest span.' },
+      { name: 'Humane service registry', desc: 'Backstage-inspired catalog: owner, health, API docs, version, and upstream/downstream dependencies for every sandbox service.' },
+    ]
+  }
+};
+
+// ── Navigation ─────────────────────────────────
+const titles = { dashboard: 'Dashboard', labs: 'Lab Modules', chaos: 'Chaos Console', registry: 'Service Registry' };
+let faultCounter = 2;
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const screen = item.dataset.screen;
+    if (!screen) return;
+    // Update nav
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+    // Update screen
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + screen).classList.add('active');
+    // Update title
+    document.getElementById('pageTitle').textContent = titles[screen] || screen;
+  });
+});
+
+// ── Theme toggle ───────────────────────────────
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+let darkMode = false;
+
+themeToggle.addEventListener('click', () => {
+  darkMode = !darkMode;
+  document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  // Swap icon
+  themeIcon.innerHTML = darkMode
+    ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    : '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
+  document.querySelector('.theme-label').textContent = darkMode ? 'Light mode' : 'Dark mode';
+});
+
+// ── Lab module selection ───────────────────────
+let selectedModule = null;
+document.querySelectorAll('.module-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const id = card.dataset.module;
+    document.querySelectorAll('.module-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedModule = id;
+    showModuleDetail(id);
+  });
+});
+
+function showModuleDetail(id) {
+  const detail = document.getElementById('moduleDetail');
+  const body = document.getElementById('detailBody');
+  const data = moduleData[id];
+  if (!data) return;
+
+  detail.style.display = '';
+  body.innerHTML = data.features.map(f =>
+    '<div class="feature-item"><div><div class="feature-name">' + f.name + '</div><div class="feature-desc">' + f.desc + '</div></div></div>'
+  ).join('');
+
+  // Reset tabs
+  detail.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  detail.querySelector('.detail-tab[data-tab="overview"]').classList.add('active');
+}
+
+// Tab switching
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('detail-tab')) {
+    const tab = e.target.dataset.tab;
+    e.target.closest('.detail-tabs').querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+    e.target.classList.add('active');
+
+    const body = document.getElementById('detailBody');
+    if (tab === 'experiments' && selectedModule) {
+      body.innerHTML = '<div style="color:var(--fg-muted);font-size:13px;padding:8px 0">No experiments running for this module. Start one from the feature list above.</div>';
+    } else if (tab === 'guide' && selectedModule) {
+      body.innerHTML = '<div style="color:var(--fg-muted);font-size:13px;padding:8px 0">Lab guide and concept notes will appear here. Based on <em>Building Microservices</em> and <em>Designing Data-Intensive Applications</em>.</div>';
+    } else if (selectedModule) {
+      showModuleDetail(selectedModule);
+    }
+  }
+});
+
+// ── Chaos fault injection ──────────────────────
+function injectFault() {
+  const type = document.getElementById('faultType');
+  const target = document.getElementById('faultTarget');
+  const magnitude = document.getElementById('faultMagnitude');
+  const typeLabel = type.options[type.selectedIndex].text;
+  const targetLabel = target.value;
+
+  faultCounter++;
+  const id = 'FLT-' + String(faultCounter).padStart(3, '0');
+
+  const tbody = document.querySelector('#faultsTable tbody');
+  const row = document.createElement('tr');
+  row.innerHTML = '<td class="mono">' + id + '</td><td>' + typeLabel + '</td><td class="mono">' + targetLabel + '</td><td class="mono">' + magnitude.value + '</td><td><button class="btn-danger" style="padding:2px 10px;font-size:12px" onclick="this.closest(\'tr\').remove();updateFaultCount()">Stop</button></td>';
+  tbody.appendChild(row);
+  updateFaultCount();
+  showToast('Fault ' + id + ' injected: ' + typeLabel + ' on ' + targetLabel);
+}
+
+function updateFaultCount() {
+  const count = document.querySelectorAll('#faultsTable tbody tr').length;
+  document.getElementById('faultCount').textContent = count + ' active';
+}
+
+// ── Toast ──────────────────────────────────────
+function showToast(message) {
+  const container = document.getElementById('toasts');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 200ms'; setTimeout(() => toast.remove(), 200); }, 3000);
+}
+</script>
+</body>
+</html>
