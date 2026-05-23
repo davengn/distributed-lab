@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 interface Toast {
   id: number;
   message: string;
-  type: "success" | "error" | "info";
+  type: "success" | "error" | "info" | "warning";
 }
 
 let toastId = 0;
@@ -37,11 +37,19 @@ export function ToastContainer() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="bg-canvas-subtle border border-border rounded-[6px] px-4 py-3 text-sm text-fg-default shadow-[0_4px_12px_rgba(0,0,0,0.1)] animate-[slideIn_200ms_ease-out]"
+          role="status"
+          className={`rounded-[6px] border px-4 py-3 text-table text-fg-default shadow-[0_4px_12px_rgba(0,0,0,0.1)] animate-[slideIn_200ms_ease-out] ${toastClass(toast.type)}`}
         >
           {toast.message}
         </div>
       ))}
     </div>
   );
+}
+
+function toastClass(type: Toast["type"]) {
+  if (type === "success") return "border-success-fg bg-success-subtle";
+  if (type === "error") return "border-danger-fg bg-danger-subtle";
+  if (type === "warning") return "border-attention-fg bg-attention-subtle";
+  return "border-border bg-canvas-subtle";
 }

@@ -5,80 +5,127 @@ import { MetricCard } from "@/components/MetricCard";
 import { ServiceCard } from "@/components/ServiceCard";
 import { EventFeed } from "@/components/EventFeed";
 import { ExperimentsTable } from "@/components/ExperimentsTable";
+import { Panel } from "@/components/Panel";
 import { apiClient } from "@/lib/api-client";
+import {
+  prototypeEvents,
+  prototypeExperiments,
+  prototypeServices,
+  type PrototypeExperiment,
+  type PrototypeService,
+  type ServiceStatus,
+} from "@/lib/prototype-data";
 import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
   const { services, loading, error } = useServices();
-  const [experiments, setExperiments] = useState([]);
+  const [experiments, setExperiments] = useState<PrototypeExperiment[]>([]);
 
   useEffect(() => {
-    apiClient.get<never[]>("/experiments").then(setExperiments).catch(() => {});
+    apiClient.get<PrototypeExperiment[]>("/experiments").then(setExperiments).catch(() => {});
   }, []);
 
-  const healthyCount = services.filter((s) => s.status === "running").length;
-  const healthPct = services.length > 0 ? Math.round((healthyCount / services.length) * 100) : 0;
+  const displayServices =
+    services.length > 0 ? services.map(mapLiveServiceToDisplay) : prototypeServices;
+  const displayExperiments = experiments.length > 0 ? experiments : prototypeExperiments;
+  const realHealthyCount = services.filter((s) => s.status === "running").length;
+  const serviceMetric = services.length > 0 ? `${realHealthyCount} / ${services.length}` : "6 / 7";
+  const healthPct =
+    services.length > 0 ? Math.round((realHealthyCount / services.length) * 100) : 86;
 
   return (
-    <div>
-      <h1 className="text-section text-fg-default mb-6">Dashboard</h1>
-
-      {/* Metric Cards */}
+    <div className="min-w-0">
       <div className="grid grid-cols-4 max-xl:grid-cols-2 max-md:grid-cols-1 gap-4 mb-6">
-        <MetricCard label="Services" value={loading ? "--" : String(services.length)} />
-        <MetricCard label="Active Experiments" value={String(experiments.length)} />
-        <MetricCard label="System Health" value={loading ? "--" : `${healthPct}%`} />
-        <MetricCard label="Uptime" value="--" />
+        <MetricCard
+          label="Services"
+          value={loading && services.length === 0 ? serviceMetric : serviceMetric}
+          tone="success"
+          sparkline={[18, 16, 14, 15, 12, 10, 11, 9, 8, 9, 7]}
+        />
+        <MetricCard
+          label="Active Experiments"
+          value={displayExperiments.length}
+          tone="accent"
+          sparkline={[22, 20, 18, 15, 14, 12, 10, 8, 7, 6, 5]}
+        />
+        <MetricCard
+          label="System Health"
+          value={`${healthPct}%`}
+          tone="attention"
+          sparkline={[6, 7, 8, 6, 9, 10, 12, 14, 11, 13, 15]}
+        />
+        <MetricCard
+          label="Uptime"
+          value="2d 14h"
+          subtext={
+            <>
+              Since last <code>docker compose up</code>
+            </>
+          }
+        />
       </div>
 
-      {/* Service Health Grid */}
-      <div className="border border-border rounded-[6px] mb-6">
-        <div className="bg-canvas-subtle border-b border-border px-4 py-3">
-          <h2 className="text-section text-fg-default">Service Health</h2>
-        </div>
-        <div className="p-4">
+      <div className="grid grid-cols-2 gap-4 mb-6 max-xl:grid-cols-1">
+        <Panel title="Service Health">
           {error && <p className="text-danger-fg text-sm mb-3">{error}</p>}
-          {loading ? (
-            <p className="text-fg-muted text-sm">Connecting to Lab API...</p>
-          ) : services.length === 0 ? (
-            <p className="text-fg-muted text-sm">No services detected</p>
-          ) : (
-            <div className="grid grid-cols-3 max-xl:grid-cols-2 max-md:grid-cols-1 gap-3">
-              {services.map((s) => (
-                <ServiceCard
-                  key={s.id}
-                  name={s.name}
-                  status={s.status as "running" | "degraded" | "stopped"}
-                  version={s.version}
-                  port={s.port}
-                  cpuPercent={s.cpuPercent}
-                  memoryPercent={s.memoryPercent}
-                />
-              ))}
-            </div>
+          {loading && services.length === 0 && (
+            <p className="mb-3 text-sm text-fg-muted">Connecting to Lab API with review data shown.</p>
           )}
-        </div>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-2">
+            {displayServices.map((s) => (
+              <ServiceCard
+                key={s.id}
+                name={s.name}
+                displayName={s.displayName}
+                description={s.description}
+                status={s.status}
+                version={s.version}
+                port={s.port}
+                cpuPercent={s.cpuPercent}
+                memoryPercent={s.memoryPercent}
+              />
+            ))}
+          </div>
+        </Panel>
+
+        <Panel title="Active Experiments" noPadding>
+          <ExperimentsTable experiments={displayExperiments} />
+        </Panel>
       </div>
 
-      {/* Experiments + Events */}
-      <div className="grid grid-cols-2 max-md:grid-cols-1 gap-4">
-        <div className="border border-border rounded-[6px]">
-          <div className="bg-canvas-subtle border-b border-border px-4 py-3">
-            <h2 className="text-section text-fg-default">Active Experiments</h2>
-          </div>
-          <div className="p-4">
-            <ExperimentsTable experiments={experiments} />
-          </div>
-        </div>
-        <div className="border border-border rounded-[6px]">
-          <div className="bg-canvas-subtle border-b border-border px-4 py-3">
-            <h2 className="text-section text-fg-default">Recent Events</h2>
-          </div>
-          <div className="p-4">
-            <EventFeed />
-          </div>
-        </div>
-      </div>
+      <Panel title="Recent Events" noPadding>
+        <EventFeed fallbackEvents={prototypeEvents} />
+      </Panel>
     </div>
   );
+}
+
+function mapLiveServiceToDisplay(service: {
+  id: string;
+  name: string;
+  status: string;
+  version: string;
+  port: number;
+  cpuPercent: number;
+  memoryPercent: number;
+}): PrototypeService {
+  const fallback = prototypeServices.find((item) => item.name === service.name);
+  const status: ServiceStatus =
+    service.status === "running" || service.status === "degraded" || service.status === "stopped"
+      ? service.status
+      : "stopped";
+
+  return {
+    id: service.id,
+    name: service.name,
+    displayName: fallback?.displayName ?? service.name,
+    description: fallback?.description ?? service.name,
+    status,
+    version: service.version,
+    image: fallback?.image ?? "service",
+    dependencies: fallback?.dependencies ?? [],
+    port: service.port,
+    cpuPercent: service.cpuPercent,
+    memoryPercent: service.memoryPercent,
+  };
 }

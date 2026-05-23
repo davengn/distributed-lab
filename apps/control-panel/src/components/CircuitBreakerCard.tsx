@@ -1,15 +1,14 @@
 "use client";
 
 import { StatusPill } from "./StatusPill";
-import { ProgressBar } from "./ProgressBar";
 
 interface CircuitBreakerCardProps {
   serviceName: string;
   state: "closed" | "open" | "half_open";
   failureCount: number;
   successRate: number;
-  failureRateThreshold: number;
-  slowCallRate: number;
+  threshold?: number;
+  failureRateThreshold?: number;
 }
 
 const STATE_LABELS: Record<string, string> = {
@@ -36,45 +35,26 @@ export function CircuitBreakerCard({
   state,
   failureCount,
   successRate,
+  threshold,
   failureRateThreshold,
-  slowCallRate,
 }: CircuitBreakerCardProps) {
-  const failureRate = 100 - successRate;
+  const displayThreshold = threshold ?? failureRateThreshold ?? 50;
 
   return (
-    <div className="border border-border rounded-[6px] p-3 hover:border-accent-fg transition-colors">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-medium text-fg-default">{serviceName}</span>
-        <StatusPill status={mapStateToStatus(state)} label={STATE_LABELS[state]} />
-      </div>
-
-      <div className="space-y-2">
-        <div>
-          <div className="flex justify-between text-caption text-fg-muted mb-0.5">
-            <span>Failure rate</span>
-            <span className="mono">{failureRate.toFixed(1)}%</span>
-          </div>
-          <ProgressBar value={failureRate} threshold={failureRateThreshold} />
-        </div>
-
-        <div>
-          <div className="flex justify-between text-caption text-fg-muted mb-0.5">
-            <span>Slow call rate</span>
-            <span className="mono">{slowCallRate.toFixed(1)}%</span>
-          </div>
-          <ProgressBar value={slowCallRate} />
-        </div>
-
-        <div className="flex justify-between text-caption text-fg-muted pt-1 border-t border-border">
-          <span>Failed calls</span>
-          <span className="mono">{failureCount}</span>
-        </div>
-
-        <div className="flex justify-between text-caption text-fg-muted">
-          <span>Threshold</span>
-          <span className="mono">{failureRateThreshold}%</span>
+    <article className="mb-2 flex items-center gap-3 rounded-[6px] border border-border bg-canvas px-3.5 py-3 last:mb-0">
+      <StatusPill status={mapStateToStatus(state)} label={STATE_LABELS[state]} />
+      <div className="min-w-0 flex-1">
+        <div className="mono truncate text-[13px] font-medium text-fg-default">{serviceName}</div>
+        <div className="mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5 text-caption text-fg-muted">
+          <span className="tabular-nums">{failureCount} failures</span>
+          <span className="tabular-nums">success rate {formatPercent(successRate)}</span>
+          <span className="tabular-nums">threshold {displayThreshold}%</span>
         </div>
       </div>
-    </div>
+    </article>
   );
+}
+
+function formatPercent(value: number) {
+  return Number.isInteger(value) ? `${value}%` : `${value.toFixed(1)}%`;
 }

@@ -1,11 +1,14 @@
 import { StatusPill } from "./StatusPill";
+import { TableShell, tableCellClass, tableHeaderCellClass } from "./Panel";
 
 interface Experiment {
   id: string;
-  type: string;
-  status: "pending" | "running" | "completed" | "failed";
-  targetService: string;
-  startedAt: string;
+  description?: string;
+  module?: string;
+  type?: string;
+  status: "pending" | "running" | "completed" | "failed" | "stopped";
+  targetService?: string;
+  startedAt?: string;
 }
 
 interface ExperimentsTableProps {
@@ -14,31 +17,59 @@ interface ExperimentsTableProps {
 
 export function ExperimentsTable({ experiments }: ExperimentsTableProps) {
   if (experiments.length === 0) {
-    return <p className="text-fg-muted text-sm">No active experiments</p>;
+    return <p className="p-4 text-sm text-fg-muted">No active experiments</p>;
   }
 
   return (
-    <table className="w-full text-left">
+    <TableShell minWidth="min-w-[520px]" ariaLabel="Active experiments">
       <thead>
-        <tr className="border-b border-border-subtle">
-          <th className="px-3 py-1.5 text-caption font-medium text-fg-muted">ID</th>
-          <th className="px-3 py-1.5 text-caption font-medium text-fg-muted">Type</th>
-          <th className="px-3 py-1.5 text-caption font-medium text-fg-muted">Target</th>
-          <th className="px-3 py-1.5 text-caption font-medium text-fg-muted">Status</th>
-          <th className="px-3 py-1.5 text-caption font-medium text-fg-muted">Started</th>
+        <tr>
+          <th className={tableHeaderCellClass}>ID</th>
+          <th className={tableHeaderCellClass}>Experiment</th>
+          <th className={tableHeaderCellClass}>Module</th>
+          <th className={tableHeaderCellClass}>Status</th>
         </tr>
       </thead>
       <tbody>
-        {experiments.map((exp) => (
-          <tr key={exp.id} className="border-b border-border-subtle">
-            <td className="px-3 py-2 text-table mono">{exp.id}</td>
-            <td className="px-3 py-2 text-table">{exp.type.replace(/_/g, " ")}</td>
-            <td className="px-3 py-2 text-table">{exp.targetService}</td>
-            <td className="px-3 py-2"><StatusPill status={exp.status === "completed" ? "completed" : exp.status === "running" ? "running" : "stopped"} /></td>
-            <td className="px-3 py-2 text-table mono">{new Date(exp.startedAt).toLocaleTimeString()}</td>
-          </tr>
-        ))}
+        {experiments.map((exp) => {
+          const normalized = normalizeExperiment(exp);
+
+          return (
+            <tr key={normalized.id}>
+              <td className={`${tableCellClass} mono whitespace-nowrap`}>{normalized.id}</td>
+              <td className={`${tableCellClass} max-w-[260px] truncate`}>
+                {normalized.description}
+              </td>
+              <td className={`${tableCellClass} whitespace-nowrap`}>{normalized.module}</td>
+              <td className={`${tableCellClass} whitespace-nowrap`}>
+                <StatusPill status={normalized.status} label={normalized.label} />
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
-    </table>
+    </TableShell>
   );
+}
+
+function normalizeExperiment(exp: Experiment) {
+  const status = mapStatus(exp.status);
+  const fallbackDescription = [exp.type?.replace(/_/g, " "), exp.targetService]
+    .filter(Boolean)
+    .join(": ");
+
+  return {
+    id: exp.id,
+    description: exp.description ?? fallbackDescription,
+    module: exp.module ?? exp.targetService ?? "Sandbox",
+    status,
+    label: status === "completed" ? "Done" : status[0].toUpperCase() + status.slice(1),
+  };
+}
+
+function mapStatus(status: Experiment["status"]): "running" | "completed" | "failed" | "stopped" {
+  if (status === "running") return "running";
+  if (status === "completed") return "completed";
+  if (status === "failed") return "failed";
+  return "stopped";
 }

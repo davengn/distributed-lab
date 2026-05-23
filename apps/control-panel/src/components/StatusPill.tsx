@@ -1,5 +1,12 @@
 interface StatusPillProps {
-  status: "running" | "degraded" | "stopped" | "open" | "closed" | "completed";
+  status:
+    | "running"
+    | "degraded"
+    | "stopped"
+    | "open"
+    | "closed"
+    | "completed"
+    | "failed";
   label?: string;
 }
 
@@ -10,6 +17,7 @@ const STATUS_STYLES: Record<string, string> = {
   open: "bg-danger-subtle text-danger-fg",
   closed: "bg-success-subtle text-success-fg",
   completed: "bg-done-subtle text-done-fg",
+  failed: "bg-danger-subtle text-danger-fg",
 };
 
 const DOT_STYLES: Record<string, string> = {
@@ -19,6 +27,7 @@ const DOT_STYLES: Record<string, string> = {
   open: "bg-danger-fg",
   closed: "bg-success-fg",
   completed: "bg-done-fg",
+  failed: "bg-danger-fg",
 };
 
 export function StatusPill({ status, label }: StatusPillProps) {

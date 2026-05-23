@@ -1,27 +1,46 @@
+import type { ReactNode } from "react";
+
 interface MetricCardProps {
   label: string;
   value: string | number;
+  subtext?: ReactNode;
   sparkline?: number[];
-  color?: string;
+  tone?: "success" | "accent" | "attention" | "done";
 }
 
-export function MetricCard({ label, value, sparkline, color = "var(--success-fg)" }: MetricCardProps) {
+const TONE_COLOR: Record<NonNullable<MetricCardProps["tone"]>, string> = {
+  success: "var(--success-fg)",
+  accent: "var(--accent-fg)",
+  attention: "var(--attention-fg)",
+  done: "var(--done-fg)",
+};
+
+export function MetricCard({
+  label,
+  value,
+  subtext,
+  sparkline,
+  tone = "success",
+}: MetricCardProps) {
   return (
-    <div className="border border-border rounded-[6px] p-4">
-      <div className="text-fg-muted text-caption mb-1">{label}</div>
-      <div className="flex items-end justify-between">
-        <div className="text-metric text-fg-default">{value}</div>
+    <div className="rounded-[6px] border border-border bg-canvas p-4">
+      <div className="mb-1 text-caption font-medium text-fg-muted">{label}</div>
+      <div className="flex min-h-8 items-end justify-between gap-3">
+        <div className="text-metric tabular-nums text-fg-default">{value}</div>
         {sparkline && sparkline.length > 0 && (
-          <svg width="80" height="28" className="shrink-0">
+          <svg viewBox="0 0 100 28" className="h-7 w-full max-w-[112px] shrink-0" aria-hidden="true">
             <polyline
               fill="none"
-              stroke={color}
+              stroke={TONE_COLOR[tone]}
               strokeWidth="1.5"
-              points={sparklineToPoints(sparkline, 80, 28)}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              points={sparklineToPoints(sparkline, 100, 28)}
             />
           </svg>
         )}
       </div>
+      {subtext && <div className="mt-2 text-caption text-fg-muted">{subtext}</div>}
     </div>
   );
 }

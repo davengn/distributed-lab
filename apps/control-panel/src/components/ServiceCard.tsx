@@ -3,6 +3,8 @@ import { ProgressBar } from "./ProgressBar";
 
 interface ServiceCardProps {
   name: string;
+  displayName?: string;
+  description?: string;
   status: "running" | "degraded" | "stopped";
   version?: string;
   port?: number;
@@ -10,35 +12,44 @@ interface ServiceCardProps {
   memoryPercent: number;
 }
 
-export function ServiceCard({ name, status, version, port, cpuPercent, memoryPercent }: ServiceCardProps) {
+export function ServiceCard({
+  name,
+  displayName,
+  description,
+  status,
+  version,
+  port,
+  cpuPercent,
+  memoryPercent,
+}: ServiceCardProps) {
+  const title = displayName ?? name;
+  const meta = [description, version, port ? `:${port}` : undefined].filter(Boolean).join(" · ");
+
   return (
-    <div className="border border-border rounded-[6px] p-3 hover:border-accent-fg transition-colors">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-fg-default">{name}</span>
-          {version && <span className="mono text-caption text-fg-muted">{version}</span>}
-        </div>
+    <article className="rounded-[6px] border border-border bg-canvas p-3 transition-colors hover:border-accent-fg">
+      <div className="mb-2 flex items-start justify-between gap-3">
+        <span className="mono min-w-0 truncate text-[13px] font-semibold text-fg-default" title={name}>
+          {title}
+        </span>
         <StatusPill status={status} />
       </div>
-      <div className="space-y-2">
-        <div>
-          <div className="flex justify-between text-caption text-fg-muted mb-0.5">
-            <span>CPU</span>
-            <span className="mono">{cpuPercent.toFixed(1)}%</span>
-          </div>
-          <ProgressBar value={cpuPercent} />
-        </div>
-        <div>
-          <div className="flex justify-between text-caption text-fg-muted mb-0.5">
-            <span>MEM</span>
-            <span className="mono">{memoryPercent.toFixed(1)}%</span>
-          </div>
-          <ProgressBar value={memoryPercent} />
-        </div>
+      {meta && <div className="mb-2.5 truncate text-caption text-fg-muted">{meta}</div>}
+      <div className="space-y-1">
+        <ResourceRow label="CPU" value={cpuPercent} />
+        <ResourceRow label="MEM" value={memoryPercent} />
       </div>
-      {port && (
-        <div className="mt-2 text-caption text-fg-muted mono">:{port}</div>
-      )}
+    </article>
+  );
+}
+
+function ResourceRow({ label, value }: { label: string; value: number }) {
+  const displayValue = `${Math.round(value)}%`;
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="mono w-7 shrink-0 text-[11px] text-fg-muted">{label}</span>
+      <ProgressBar value={value} />
+      <span className="mono w-8 shrink-0 text-right text-[11px] text-fg-muted">{displayValue}</span>
     </div>
   );
 }
