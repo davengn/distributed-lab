@@ -12,9 +12,9 @@ The technical approach follows a monorepo structure with a Next.js frontend (con
 
 ## Technical Context
 
-**Language/Version**: Java 21 (Spring Boot 3), TypeScript (Next.js 14 / App Router)
+**Language/Version**: Java 21 (Spring Boot 3), TypeScript (Next.js 16 / App Router)
 
-**Primary Dependencies**: Spring Boot 3, Next.js 14, Tailwind CSS, Recharts/D3, Docker Java SDK, Resilience4j, Kafka (Confluent), Debezium, Toxiproxy, Pact Broker, OpenTelemetry
+**Primary Dependencies**: Spring Boot 3, Next.js 16, Tailwind CSS, Recharts/D3, Docker Java SDK, Resilience4j, Kafka (Confluent), Debezium, Toxiproxy, Pact Broker, OpenTelemetry
 
 **Storage**: PostgreSQL 16, MongoDB 7, Neo4j 5, Redis 7, Apache Kafka, Elasticsearch (read model for CDC)
 
@@ -32,15 +32,15 @@ The technical approach follows a monorepo structure with a Next.js frontend (con
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-| Principle | Gate | Status |
-|-----------|------|--------|
-| I. Code Quality & Service Boundaries | Services are independently buildable in the monorepo; `_template` skeleton provided; linters configured (Checkstyle, ESLint+Prettier) | PASS |
-| II. Test-First Development | TDD enforced; unit + integration + contract tests required per service; Docker Compose health checks required | PASS |
-| III. User Experience Consistency | One-command start; concept-first naming; dark/light mode; consistent UI patterns; WebSocket real-time updates | PASS |
-| IV. Performance & Resource Standards | 120s startup; <500ms p95; <2s real-time; memory limits on all containers; <2GB per container | PASS |
-| V. Observability-First Engineering | Pre-configured Prometheus/Grafana/Jaeger/Loki; OpenTelemetry on all services; structured logging; correlation IDs | PASS |
+| Principle                            | Gate                                                                                                                                  | Status |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| I. Code Quality & Service Boundaries | Services are independently buildable in the monorepo; `_template` skeleton provided; linters configured (Checkstyle, ESLint+Prettier) | PASS   |
+| II. Test-First Development           | TDD enforced; unit + integration + contract tests required per service; Docker Compose health checks required                         | PASS   |
+| III. User Experience Consistency     | One-command start; concept-first naming; dark/light mode; consistent UI patterns; WebSocket real-time updates                         | PASS   |
+| IV. Performance & Resource Standards | 120s startup; <500ms p95; <2s real-time; memory limits on all containers; <2GB per container                                          | PASS   |
+| V. Observability-First Engineering   | Pre-configured Prometheus/Grafana/Jaeger/Loki; OpenTelemetry on all services; structured logging; correlation IDs                     | PASS   |
 
 All gates PASS. No violations to justify.
 
@@ -137,5 +137,5 @@ distributed-lab/
 > No constitution violations detected. All gates PASS.
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| N/A | N/A | N/A |
+| --------- | ---------- | ------------------------------------ |
+| N/A       | N/A        | N/A                                  |
