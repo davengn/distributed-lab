@@ -1,602 +1,1157 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;font-weight:300;font-size:15px;line-height:1.7;color:var(--color-text-primary);background:transparent}
-h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:300}
-code,pre,kbd{font-family:'IBM Plex Mono',monospace}
-.doc{max-width:780px;margin:0 auto;padding:2.5rem 0 4rem}
-.cover{border-left:2px solid var(--color-border-primary);padding-left:1.5rem;margin-bottom:3rem}
-.cover-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--color-text-tertiary);text-transform:uppercase;margin-bottom:.5rem}
-.cover h1{font-size:2.4rem;line-height:1.15;color:var(--color-text-primary);margin-bottom:.75rem}
-.cover h1 em{font-style:italic;color:var(--color-text-secondary)}
-.cover-meta{display:flex;gap:1.5rem;flex-wrap:wrap;font-size:13px;color:var(--color-text-secondary);margin-top:1rem}
-.cover-meta span{display:flex;align-items:center;gap:6px}
-.inspired-bar{display:flex;align-items:center;gap:12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem 1rem;margin-top:1.25rem;font-size:13px;color:var(--color-text-secondary)}
-.inspired-bar i{font-size:16px;color:var(--color-text-tertiary);flex-shrink:0}
-.inspired-bar strong{color:var(--color-text-primary);font-weight:500}
-.toc{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1.25rem 1.5rem;margin-bottom:3rem}
-.toc-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:.75rem}
-.toc ol{list-style:none;counter-reset:toc-counter}
-.toc li{counter-increment:toc-counter;padding:3px 0;font-size:14px}
-.toc li::before{content:counter(toc-counter,decimal-leading-zero) ". ";font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--color-text-tertiary);margin-right:8px}
-.toc a{color:var(--color-text-primary);text-decoration:none}
-.toc a:hover{color:var(--color-text-info)}
-.toc-sub{padding-left:2rem;margin-top:2px}
-.toc-sub li{font-size:13px;color:var(--color-text-secondary)}
-.toc-sub li::before{font-size:10px}
-.section{margin-bottom:3.5rem}
-.section-header{display:flex;align-items:baseline;gap:1rem;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:.75rem;margin-bottom:1.5rem}
-.section-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--color-text-tertiary);letter-spacing:.08em;flex-shrink:0}
-.section-header h2{font-size:1.4rem;line-height:1.2}
-.vision-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:1.25rem}
-.vision-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem 1.1rem}
-.vision-card .vc-label{font-size:12px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-tertiary);margin-bottom:.4rem}
-.vision-card p{font-size:14px;line-height:1.6}
-.module{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:1rem;overflow:hidden}
-.module-header{display:flex;align-items:center;gap:12px;padding:.9rem 1.25rem;background:var(--color-background-secondary)}
-.module-icon{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px}
-.m1 .module-icon{background:#E1F5EE;color:#0F6E56}
-.m2 .module-icon{background:#E6F1FB;color:#185FA5}
-.m3 .module-icon{background:#FAECE7;color:#993C1D}
-.m4 .module-icon{background:#FAEEDA;color:#854F0B}
-.m5 .module-icon{background:#EEEDFE;color:#534AB7}
-.module-title{flex:1}
-.module-title h3{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;line-height:1.3}
-.module-title p{font-size:12px;color:var(--color-text-secondary);margin-top:1px}
-.module-badge{font-size:11px;font-family:'IBM Plex Mono',monospace;padding:3px 8px;border-radius:4px;color:var(--color-text-tertiary);background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary)}
-.module-body{padding:1.1rem 1.25rem;border-top:0.5px solid var(--color-border-tertiary)}
-.feature-list{list-style:none;display:flex;flex-direction:column;gap:8px}
-.feature-list li{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.5}
-.feature-list li i{flex-shrink:0;margin-top:3px;font-size:16px;color:var(--color-text-secondary)}
-.feature-list .feat-name{font-weight:500;display:block;margin-bottom:1px}
-.feature-list .feat-desc{font-size:13px;color:var(--color-text-secondary);display:block}
-.stack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px}
-.stack-group{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem}
-.stack-group .sg-label{font-size:11px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-tertiary);margin-bottom:.6rem}
-.stack-item{display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0}
-.stack-item i{font-size:15px;color:var(--color-text-secondary);width:18px;text-align:center}
-.roadmap{position:relative;padding-left:24px}
-.roadmap::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--color-border-tertiary)}
-.phase{position:relative;margin-bottom:1.75rem}
-.phase-dot{position:absolute;left:-21px;top:5px;width:10px;height:10px;border-radius:50%;border:2px solid var(--color-border-primary);background:var(--color-background-primary)}
-.phase.active .phase-dot{background:#1D9E75;border-color:#1D9E75}
-.phase-label{font-size:11px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-tertiary);margin-bottom:4px}
-.phase h4{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;margin-bottom:.4rem}
-.phase ul{list-style:none;display:flex;flex-direction:column;gap:4px}
-.phase ul li{font-size:13px;color:var(--color-text-secondary);display:flex;align-items:center;gap:6px}
-.phase ul li::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--color-border-primary);flex-shrink:0}
-.arch-diagram{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1.5rem;margin-top:1.25rem}
-.arch-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.arch-layer{flex:1;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);padding:.6rem 1rem;font-size:13px}
-.arch-layer span{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--color-text-tertiary);display:block}
-.arch-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;font-size:12px;color:var(--color-text-secondary)}
-.arch-legend span{display:flex;align-items:center;gap:5px}
-.dot{width:8px;height:8px;border-radius:50%}
-.repo-tree{font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.8;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1.1rem 1.25rem;color:var(--color-text-secondary);margin-top:1rem}
-.repo-tree .dir{color:var(--color-text-primary);font-weight:500}
-.repo-tree .comment{color:var(--color-text-tertiary)}
-.principles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.principle{border-left:2px solid var(--color-border-tertiary);padding-left:.9rem}
-.principle h4{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;margin-bottom:.25rem}
-.principle p{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
-.callout{border-left:2px solid;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.8rem 1.1rem;margin:1.25rem 0;font-size:14px}
-.callout-info{border-color:#378ADD;background:#E6F1FB;color:#0C447C}
-.callout-warn{border-color:#BA7517;background:#FAEEDA;color:#633806}
-.callout i{margin-right:6px;font-size:15px;vertical-align:-2px}
-.doc-footer{border-top:0.5px solid var(--color-border-tertiary);padding-top:1.5rem;margin-top:3rem;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--color-text-tertiary)}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--color-text-primary);
+      background: transparent
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300
+    }
+
+    code,
+    pre,
+    kbd {
+      font-family: 'IBM Plex Mono', monospace
+    }
+
+    .doc {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 2.5rem 0 4rem
+    }
+
+    .cover {
+      border-left: 2px solid var(--color-border-primary);
+      padding-left: 1.5rem;
+      margin-bottom: 3rem
+    }
+
+    .cover-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      margin-bottom: .5rem
+    }
+
+    .cover h1 {
+      font-size: 2.4rem;
+      line-height: 1.15;
+      color: var(--color-text-primary);
+      margin-bottom: .75rem
+    }
+
+    .cover h1 em {
+      font-style: italic;
+      color: var(--color-text-secondary)
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-top: 1rem
+    }
+
+    .cover-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .inspired-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      padding: .7rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 13px;
+      color: var(--color-text-secondary)
+    }
+
+    .inspired-bar i {
+      font-size: 16px;
+      color: var(--color-text-tertiary);
+      flex-shrink: 0
+    }
+
+    .inspired-bar strong {
+      color: var(--color-text-primary);
+      font-weight: 500
+    }
+
+    .toc {
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 3rem
+    }
+
+    .toc-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-tertiary);
+      margin-bottom: .75rem
+    }
+
+    .toc ol {
+      list-style: none;
+      counter-reset: toc-counter
+    }
+
+    .toc li {
+      counter-increment: toc-counter;
+      padding: 3px 0;
+      font-size: 14px
+    }
+
+    .toc li::before {
+      content: counter(toc-counter, decimal-leading-zero) ". ";
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      margin-right: 8px
+    }
+
+    .toc a {
+      color: var(--color-text-primary);
+      text-decoration: none
+    }
+
+    .toc a:hover {
+      color: var(--color-text-info)
+    }
+
+    .toc-sub {
+      padding-left: 2rem;
+      margin-top: 2px
+    }
+
+    .toc-sub li {
+      font-size: 13px;
+      color: var(--color-text-secondary)
+    }
+
+    .toc-sub li::before {
+      font-size: 10px
+    }
+
+    .section {
+      margin-bottom: 3.5rem
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      padding-bottom: .75rem;
+      margin-bottom: 1.5rem
+    }
+
+    .section-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      letter-spacing: .08em;
+      flex-shrink: 0
+    }
+
+    .section-header h2 {
+      font-size: 1.4rem;
+      line-height: 1.2
+    }
+
+    .vision-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 1.25rem
+    }
+
+    .vision-card {
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      padding: 1rem 1.1rem
+    }
+
+    .vision-card .vc-label {
+      font-size: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--color-text-tertiary);
+      margin-bottom: .4rem
+    }
+
+    .vision-card p {
+      font-size: 14px;
+      line-height: 1.6
+    }
+
+    .module {
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      margin-bottom: 1rem;
+      overflow: hidden
+    }
+
+    .module-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: .9rem 1.25rem;
+      background: var(--color-background-secondary)
+    }
+
+    .module-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 17px
+    }
+
+    .m1 .module-icon {
+      background: #E1F5EE;
+      color: #0F6E56
+    }
+
+    .m2 .module-icon {
+      background: #E6F1FB;
+      color: #185FA5
+    }
+
+    .m3 .module-icon {
+      background: #FAECE7;
+      color: #993C1D
+    }
+
+    .m4 .module-icon {
+      background: #FAEEDA;
+      color: #854F0B
+    }
+
+    .m5 .module-icon {
+      background: #EEEDFE;
+      color: #534AB7
+    }
+
+    .module-title {
+      flex: 1
+    }
+
+    .module-title h3 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.3
+    }
+
+    .module-title p {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      margin-top: 1px
+    }
+
+    .module-badge {
+      font-size: 11px;
+      font-family: 'IBM Plex Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: var(--color-text-tertiary);
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary)
+    }
+
+    .module-body {
+      padding: 1.1rem 1.25rem;
+      border-top: 0.5px solid var(--color-border-tertiary)
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      line-height: 1.5
+    }
+
+    .feature-list li i {
+      flex-shrink: 0;
+      margin-top: 3px;
+      font-size: 16px;
+      color: var(--color-text-secondary)
+    }
+
+    .feature-list .feat-name {
+      font-weight: 500;
+      display: block;
+      margin-bottom: 1px
+    }
+
+    .feature-list .feat-desc {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      display: block
+    }
+
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      gap: 10px
+    }
+
+    .stack-group {
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      padding: 1rem
+    }
+
+    .stack-group .sg-label {
+      font-size: 11px;
+      font-family: 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--color-text-tertiary);
+      margin-bottom: .6rem
+    }
+
+    .stack-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      padding: 4px 0
+    }
+
+    .stack-item i {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      width: 18px;
+      text-align: center
+    }
+
+    .roadmap {
+      position: relative;
+      padding-left: 24px
+    }
+
+    .roadmap::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: var(--color-border-tertiary)
+    }
+
+    .phase {
+      position: relative;
+      margin-bottom: 1.75rem
+    }
+
+    .phase-dot {
+      position: absolute;
+      left: -21px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border-primary);
+      background: var(--color-background-primary)
+    }
+
+    .phase.active .phase-dot {
+      background: #1D9E75;
+      border-color: #1D9E75
+    }
+
+    .phase-label {
+      font-size: 11px;
+      font-family: 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--color-text-tertiary);
+      margin-bottom: 4px
+    }
+
+    .phase h4 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: .4rem
+    }
+
+    .phase ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px
+    }
+
+    .phase ul li {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .phase ul li::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--color-border-primary);
+      flex-shrink: 0
+    }
+
+    .arch-diagram {
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-lg);
+      padding: 1.5rem;
+      margin-top: 1.25rem
+    }
+
+    .arch-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px
+    }
+
+    .arch-layer {
+      flex: 1;
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-md);
+      background: var(--color-background-primary);
+      padding: .6rem 1rem;
+      font-size: 13px
+    }
+
+    .arch-layer span {
+      font-size: 11px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--color-text-tertiary);
+      display: block
+    }
+
+    .arch-legend {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+      font-size: 12px;
+      color: var(--color-text-secondary)
+    }
+
+    .arch-legend span {
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%
+    }
+
+    .repo-tree {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      padding: 1.1rem 1.25rem;
+      color: var(--color-text-secondary);
+      margin-top: 1rem
+    }
+
+    .repo-tree .dir {
+      color: var(--color-text-primary);
+      font-weight: 500
+    }
+
+    .repo-tree .comment {
+      color: var(--color-text-tertiary)
+    }
+
+    .principles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .principle {
+      border-left: 2px solid var(--color-border-tertiary);
+      padding-left: .9rem
+    }
+
+    .principle h4 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: .25rem
+    }
+
+    .principle p {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.5
+    }
+
+    .callout {
+      border-left: 2px solid;
+      border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+      padding: .8rem 1.1rem;
+      margin: 1.25rem 0;
+      font-size: 14px
+    }
+
+    .callout-info {
+      border-color: #378ADD;
+      background: #E6F1FB;
+      color: #0C447C
+    }
+
+    .callout-warn {
+      border-color: #BA7517;
+      background: #FAEEDA;
+      color: #633806
+    }
+
+    .callout i {
+      margin-right: 6px;
+      font-size: 15px;
+      vertical-align: -2px
+    }
+
+    .doc-footer {
+      border-top: 0.5px solid var(--color-border-tertiary);
+      padding-top: 1.5rem;
+      margin-top: 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--color-text-tertiary)
+    }
+  </style>
 </head>
+
 <body>
-<div class="doc">
+  <div class="doc">
 
-<div class="cover">
-  <div class="cover-label">Product Specification · v0.1 draft</div>
-  <h1>DistributedLab —<br><em>An open-source learning sandbox</em></h1>
-  <p style="font-size:15px;color:var(--color-text-secondary);margin-top:.75rem;max-width:520px">A self-hosted, hands-on platform to practice and deeply understand core distributed systems and microservices concepts — for individual learners and the wider developer community.</p>
-  <div class="cover-meta">
-    <span><i class="ti ti-user" aria-hidden="true"></i> Solo project → Open source</span>
-    <span><i class="ti ti-calendar" aria-hidden="true"></i> 2025</span>
-    <span><i class="ti ti-brand-github" aria-hidden="true"></i> Monorepo, MIT license</span>
-  </div>
-  <div class="inspired-bar">
-    <i class="ti ti-book" aria-hidden="true"></i>
-    <span>Inspired by <strong>Building Microservices</strong> and <strong>Designing Data-Intensive Applications</strong></span>
-  </div>
-</div>
+    <div class="cover">
+      <div class="cover-label">Product Specification · v0.1 draft</div>
+      <h1>DistributedLab —<br><em>An open-source learning sandbox</em></h1>
+      <p style="font-size:15px;color:var(--color-text-secondary);margin-top:.75rem;max-width:520px">A self-hosted,
+        hands-on platform to practice and deeply understand core distributed systems and microservices concepts — for
+        individual learners and the wider developer community.</p>
+      <div class="cover-meta">
+        <span><i class="ti ti-user" aria-hidden="true"></i> Solo project → Open source</span>
+        <span><i class="ti ti-calendar" aria-hidden="true"></i> 2025</span>
+        <span><i class="ti ti-brand-github" aria-hidden="true"></i> Monorepo, MIT license</span>
+      </div>
+      <div class="inspired-bar">
+        <i class="ti ti-book" aria-hidden="true"></i>
+        <span>Inspired by <strong>Building Microservices</strong> and <strong>Designing Data-Intensive
+            Applications</strong></span>
+      </div>
+    </div>
 
-<div class="toc">
-  <div class="toc-title">Contents</div>
-  <ol>
-    <li><a href="#vision">Vision &amp; goals</a></li>
-    <li><a href="#modules">Lab modules</a>
-      <ol class="toc-sub">
-        <li>Migration &amp; decomposition lab</li>
-        <li>Distributed data &amp; consistency sandbox</li>
-        <li>Resiliency &amp; chaos console</li>
-        <li>Workflow &amp; communication explorer</li>
-        <li>Observability suite</li>
+    <div class="toc">
+      <div class="toc-title">Contents</div>
+      <ol>
+        <li><a href="#vision">Vision &amp; goals</a></li>
+        <li><a href="#modules">Lab modules</a>
+          <ol class="toc-sub">
+            <li>Migration &amp; decomposition lab</li>
+            <li>Distributed data &amp; consistency sandbox</li>
+            <li>Resiliency &amp; chaos console</li>
+            <li>Workflow &amp; communication explorer</li>
+            <li>Observability suite</li>
+          </ol>
+        </li>
+        <li><a href="#architecture">System architecture</a></li>
+        <li><a href="#stack">Technology stack</a></li>
+        <li><a href="#repo">Repository structure</a></li>
+        <li><a href="#roadmap">Build roadmap</a></li>
+        <li><a href="#principles">Design principles</a></li>
       </ol>
-    </li>
-    <li><a href="#architecture">System architecture</a></li>
-    <li><a href="#stack">Technology stack</a></li>
-    <li><a href="#repo">Repository structure</a></li>
-    <li><a href="#roadmap">Build roadmap</a></li>
-    <li><a href="#principles">Design principles</a></li>
-  </ol>
-</div>
-
-<div class="section" id="vision">
-  <div class="section-header">
-    <span class="section-num">01</span>
-    <h2>Vision &amp; goals</h2>
-  </div>
-  <p>DistributedLab is inspired by two landmark books in the field — <em>Building Microservices</em> and <em>Designing Data-Intensive Applications</em> — which share a common insight: you cannot truly internalize distributed systems concepts by reading alone. Partial failure, replication lag, and service coupling only become viscerally real when you break them in a running system.</p>
-  <p style="margin-top:.75rem">This platform is a self-hosted "living laboratory" — a Docker Compose environment bundled with a web control panel — that lets any reader take these concepts off the page and into a real (simulated) system.</p>
-  <div class="vision-grid">
-    <div class="vision-card">
-      <div class="vc-label">Primary audience</div>
-      <p>Engineers exploring distributed systems and microservices who want to experiment with architectural patterns in a safe, isolated environment.</p>
     </div>
-    <div class="vision-card">
-      <div class="vc-label">Community goal</div>
-      <p>An open-source repo that the wider developer community can contribute new experiments, lab scenarios, and service templates to.</p>
-    </div>
-    <div class="vision-card">
-      <div class="vc-label">Core promise</div>
-      <p>One <code>docker compose up</code> launches a full multi-service environment plus a control panel. No cloud account required.</p>
-    </div>
-    <div class="vision-card">
-      <div class="vc-label">Out of scope (v1)</div>
-      <p>Multi-user auth, cloud deployment, production workload handling. The sandbox is intentionally local and educational.</p>
-    </div>
-  </div>
-</div>
 
-<div class="section" id="modules">
-  <div class="section-header">
-    <span class="section-num">02</span>
-    <h2>Lab modules</h2>
-  </div>
-  <p>The platform is structured as five independent but interconnected lab modules. Each covers a cluster of concepts central to distributed systems and microservice architecture.</p>
-
-  <div style="margin-top:1.25rem">
-
-    <div class="module m1">
-      <div class="module-header">
-        <div class="module-icon"><i class="ti ti-transform" aria-hidden="true"></i></div>
-        <div class="module-title">
-          <h3>Migration &amp; decomposition lab</h3>
-          <p>Strangler Fig, Parallel Run, Feature Toggles</p>
+    <div class="section" id="vision">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>Vision &amp; goals</h2>
+      </div>
+      <p>DistributedLab is inspired by two landmark books in the field — <em>Building Microservices</em> and
+        <em>Designing Data-Intensive Applications</em> — which share a common insight: you cannot truly internalize
+        distributed systems concepts by reading alone. Partial failure, replication lag, and service coupling only
+        become viscerally real when you break them in a running system.</p>
+      <p style="margin-top:.75rem">This platform is a self-hosted "living laboratory" — a Docker Compose environment
+        bundled with a web control panel — that lets any reader take these concepts off the page and into a real
+        (simulated) system.</p>
+      <div class="vision-grid">
+        <div class="vision-card">
+          <div class="vc-label">Primary audience</div>
+          <p>Engineers exploring distributed systems and microservices who want to experiment with architectural
+            patterns in a safe, isolated environment.</p>
         </div>
-        <span class="module-badge">Module 01</span>
-      </div>
-      <div class="module-body">
-        <ul class="feature-list">
-          <li>
-            <i class="ti ti-arrow-fork" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Majestic Monolith template</span>
-              <span class="feat-desc">A working "MusicCorp"-style Spring Boot monolith users can clone and incrementally decompose. All data in a single PostgreSQL schema to start.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-route" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Strangler Fig proxy</span>
-              <span class="feat-desc">A configurable HTTP proxy (Nginx + Lua, or Envoy) where learners redirect specific routes from the monolith to a new microservice via the control panel — no monolith code change required.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-columns" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Parallel Run comparator</span>
-              <span class="feat-desc">Fire the same request at both the monolith and the extracted service, diff the JSON responses side-by-side in the UI to build confidence before cutover.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-toggle-right" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Feature toggle dashboard</span>
-              <span class="feat-desc">Runtime control panel to flip feature flags between old and new implementations without redeployment. Backed by Redis.</span>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="module m2">
-      <div class="module-header">
-        <div class="module-icon"><i class="ti ti-database" aria-hidden="true"></i></div>
-        <div class="module-title">
-          <h3>Distributed data &amp; consistency sandbox</h3>
-          <p>CAP theorem, replication lag, event sourcing</p>
+        <div class="vision-card">
+          <div class="vc-label">Community goal</div>
+          <p>An open-source repo that the wider developer community can contribute new experiments, lab scenarios, and
+            service templates to.</p>
         </div>
-        <span class="module-badge">Module 02</span>
-      </div>
-      <div class="module-body">
-        <ul class="feature-list">
-          <li>
-            <i class="ti ti-network" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">CAP theorem visualizer</span>
-              <span class="feat-desc">A two-node key-value store where the learner manually "cuts" the network link between nodes via the UI. A live dashboard shows whether the system chooses Consistency (reject writes) or Availability (allow divergent writes).</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-clock-pause" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Replication lag simulator</span>
-              <span class="feat-desc">Configurable async leader-follower replication (PostgreSQL logical replication). A slider controls artificial lag. Read-your-writes and monotonic reads violations are surfaced visually in real time.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-git-branch" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Data model "A/B" explorer</span>
-              <span class="feat-desc">Implement the same social-network domain in three storage backends — Relational (PostgreSQL), Document (MongoDB), Graph (Neo4j). Run the same business queries against each and compare latency and schema complexity.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-activity" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">CDC &amp; event sourcing pipeline</span>
-              <span class="feat-desc">Debezium captures change events from PostgreSQL, streams to Kafka, which updates an Elasticsearch read model. Learners can pause, replay, and corrupt events to see downstream effects.</span>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="module m3">
-      <div class="module-header">
-        <div class="module-icon"><i class="ti ti-flame" aria-hidden="true"></i></div>
-        <div class="module-title">
-          <h3>Resiliency &amp; chaos console</h3>
-          <p>Chaos engineering, circuit breakers, bulkheads</p>
+        <div class="vision-card">
+          <div class="vc-label">Core promise</div>
+          <p>One <code>docker compose up</code> launches a full multi-service environment plus a control panel. No cloud
+            account required.</p>
         </div>
-        <span class="module-badge">Module 03</span>
-      </div>
-      <div class="module-body">
-        <ul class="feature-list">
-          <li>
-            <i class="ti ti-skull" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Chaos engineering panel</span>
-              <span class="feat-desc">A control panel to inject faults into running containers: kill a service, add network latency (tc netem), drop packets, or exhaust memory. Powered by Chaos Toolkit / Toxiproxy.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-shield" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Stability pattern playground</span>
-              <span class="feat-desc">Pre-wired circuit breaker (Resilience4j) and bulkhead templates. Learners configure thresholds and watch the breaker open/close in real time as a downstream service degrades.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-wall" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Cascading failure visualizer</span>
-              <span class="feat-desc">A live dependency graph that highlights which services are degraded or failed, showing whether bulkheads successfully contain the blast radius.</span>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="module m4">
-      <div class="module-header">
-        <div class="module-icon"><i class="ti ti-sitemap" aria-hidden="true"></i></div>
-        <div class="module-title">
-          <h3>Workflow &amp; communication explorer</h3>
-          <p>Sagas, idempotency, messaging patterns</p>
+        <div class="vision-card">
+          <div class="vc-label">Out of scope (v1)</div>
+          <p>Multi-user auth, cloud deployment, production workload handling. The sandbox is intentionally local and
+            educational.</p>
         </div>
-        <span class="module-badge">Module 04</span>
-      </div>
-      <div class="module-body">
-        <ul class="feature-list">
-          <li>
-            <i class="ti ti-map-route" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Saga visualizer — orchestrated &amp; choreographed</span>
-              <span class="feat-desc">The same order-fulfillment process implemented twice: once with a central orchestrator and once with pure choreography (events). A real-time map shows messages flowing between services and where coupling occurs.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-repeat" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Idempotency tester</span>
-              <span class="feat-desc">Replay the same POST request N times and verify that side effects (e.g. payment) occur exactly once. An Idempotency-Key mechanism is pre-wired; learners can disable it and observe double-processing.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Communication style lab</span>
-              <span class="feat-desc">Implement the same service interaction using REST, gRPC, and Kafka. The UI shows latency, throughput, and temporal coupling differences side-by-side under load.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-contract" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Consumer-driven contract tester (Pact)</span>
-              <span class="feat-desc">A built-in Pact Broker. Learners define consumer contracts, run provider verification, and deliberately introduce breaking changes to see CI fail fast.</span>
-            </div>
-          </li>
-        </ul>
       </div>
     </div>
 
-    <div class="module m5">
-      <div class="module-header">
-        <div class="module-icon"><i class="ti ti-telescope" aria-hidden="true"></i></div>
-        <div class="module-title">
-          <h3>Observability suite — the "paved road"</h3>
-          <p>Metrics, tracing, service registry</p>
+    <div class="section" id="modules">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Lab modules</h2>
+      </div>
+      <p>The platform is structured as five independent but interconnected lab modules. Each covers a cluster of
+        concepts central to distributed systems and microservice architecture.</p>
+
+      <div style="margin-top:1.25rem">
+
+        <div class="module m1">
+          <div class="module-header">
+            <div class="module-icon"><i class="ti ti-transform" aria-hidden="true"></i></div>
+            <div class="module-title">
+              <h3>Migration &amp; decomposition lab</h3>
+              <p>Strangler Fig, Parallel Run, Feature Toggles</p>
+            </div>
+            <span class="module-badge">Module 01</span>
+          </div>
+          <div class="module-body">
+            <ul class="feature-list">
+              <li>
+                <i class="ti ti-arrow-fork" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Majestic Monolith template</span>
+                  <span class="feat-desc">A working "MusicCorp"-style Spring Boot monolith users can clone and
+                    incrementally decompose. All data in a single PostgreSQL schema to start.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-route" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Strangler Fig proxy</span>
+                  <span class="feat-desc">A configurable HTTP proxy (Nginx + Lua, or Envoy) where learners redirect
+                    specific routes from the monolith to a new microservice via the control panel — no monolith code
+                    change required.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-columns" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Parallel Run comparator</span>
+                  <span class="feat-desc">Fire the same request at both the monolith and the extracted service, diff the
+                    JSON responses side-by-side in the UI to build confidence before cutover.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-toggle-right" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Feature toggle dashboard</span>
+                  <span class="feat-desc">Runtime control panel to flip feature flags between old and new
+                    implementations without redeployment. Backed by Redis.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-        <span class="module-badge">Module 05</span>
+
+        <div class="module m2">
+          <div class="module-header">
+            <div class="module-icon"><i class="ti ti-database" aria-hidden="true"></i></div>
+            <div class="module-title">
+              <h3>Distributed data &amp; consistency sandbox</h3>
+              <p>CAP theorem, replication lag, event sourcing</p>
+            </div>
+            <span class="module-badge">Module 02</span>
+          </div>
+          <div class="module-body">
+            <ul class="feature-list">
+              <li>
+                <i class="ti ti-network" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">CAP theorem visualizer</span>
+                  <span class="feat-desc">A two-node key-value store where the learner manually "cuts" the network link
+                    between nodes via the UI. A live dashboard shows whether the system chooses Consistency (reject
+                    writes) or Availability (allow divergent writes).</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-clock-pause" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Replication lag simulator</span>
+                  <span class="feat-desc">Configurable async leader-follower replication (PostgreSQL logical
+                    replication). A slider controls artificial lag. Read-your-writes and monotonic reads violations are
+                    surfaced visually in real time.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-git-branch" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Data model "A/B" explorer</span>
+                  <span class="feat-desc">Implement the same social-network domain in three storage backends —
+                    Relational (PostgreSQL), Document (MongoDB), Graph (Neo4j). Run the same business queries against
+                    each and compare latency and schema complexity.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-activity" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">CDC &amp; event sourcing pipeline</span>
+                  <span class="feat-desc">Debezium captures change events from PostgreSQL, streams to Kafka, which
+                    updates an Elasticsearch read model. Learners can pause, replay, and corrupt events to see
+                    downstream effects.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module m3">
+          <div class="module-header">
+            <div class="module-icon"><i class="ti ti-flame" aria-hidden="true"></i></div>
+            <div class="module-title">
+              <h3>Resiliency &amp; chaos console</h3>
+              <p>Chaos engineering, circuit breakers, bulkheads</p>
+            </div>
+            <span class="module-badge">Module 03</span>
+          </div>
+          <div class="module-body">
+            <ul class="feature-list">
+              <li>
+                <i class="ti ti-skull" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Chaos engineering panel</span>
+                  <span class="feat-desc">A control panel to inject faults into running containers: kill a service, add
+                    network latency (tc netem), drop packets, or exhaust memory. Powered by Chaos Toolkit /
+                    Toxiproxy.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-shield" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Stability pattern playground</span>
+                  <span class="feat-desc">Pre-wired circuit breaker (Resilience4j) and bulkhead templates. Learners
+                    configure thresholds and watch the breaker open/close in real time as a downstream service
+                    degrades.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-wall" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Cascading failure visualizer</span>
+                  <span class="feat-desc">A live dependency graph that highlights which services are degraded or failed,
+                    showing whether bulkheads successfully contain the blast radius.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module m4">
+          <div class="module-header">
+            <div class="module-icon"><i class="ti ti-sitemap" aria-hidden="true"></i></div>
+            <div class="module-title">
+              <h3>Workflow &amp; communication explorer</h3>
+              <p>Sagas, idempotency, messaging patterns</p>
+            </div>
+            <span class="module-badge">Module 04</span>
+          </div>
+          <div class="module-body">
+            <ul class="feature-list">
+              <li>
+                <i class="ti ti-map-route" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Saga visualizer — orchestrated &amp; choreographed</span>
+                  <span class="feat-desc">The same order-fulfillment process implemented twice: once with a central
+                    orchestrator and once with pure choreography (events). A real-time map shows messages flowing
+                    between services and where coupling occurs.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-repeat" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Idempotency tester</span>
+                  <span class="feat-desc">Replay the same POST request N times and verify that side effects (e.g.
+                    payment) occur exactly once. An Idempotency-Key mechanism is pre-wired; learners can disable it and
+                    observe double-processing.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Communication style lab</span>
+                  <span class="feat-desc">Implement the same service interaction using REST, gRPC, and Kafka. The UI
+                    shows latency, throughput, and temporal coupling differences side-by-side under load.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-contract" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Consumer-driven contract tester (Pact)</span>
+                  <span class="feat-desc">A built-in Pact Broker. Learners define consumer contracts, run provider
+                    verification, and deliberately introduce breaking changes to see CI fail fast.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module m5">
+          <div class="module-header">
+            <div class="module-icon"><i class="ti ti-telescope" aria-hidden="true"></i></div>
+            <div class="module-title">
+              <h3>Observability suite — the "paved road"</h3>
+              <p>Metrics, tracing, service registry</p>
+            </div>
+            <span class="module-badge">Module 05</span>
+          </div>
+          <div class="module-body">
+            <div class="callout callout-info" style="margin-top:0;margin-bottom:1rem"><i
+                class="ti ti-info-circle"></i>Build the observability foundation <em>first</em>. This module ships
+              pre-configured and is used by all other modules.</div>
+            <ul class="feature-list">
+              <li>
+                <i class="ti ti-chart-line" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Unified metrics &amp; log aggregator</span>
+                  <span class="feat-desc">Prometheus scrapes all services automatically. Grafana dashboards are
+                    pre-built. Loki/Promtail collects structured logs. Zero configuration for learners.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-binary-tree" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Distributed tracing dashboard (Jaeger)</span>
+                  <span class="feat-desc">Correlation IDs propagated automatically via OpenTelemetry. The control panel
+                    lets learners follow a single request across N service hops and identify the slowest span.</span>
+                </div>
+              </li>
+              <li>
+                <i class="ti ti-building-store" aria-hidden="true"></i>
+                <div>
+                  <span class="feat-name">Humane service registry</span>
+                  <span class="feat-desc">A lightweight Backstage-inspired catalog that lists each sandbox service with:
+                    owner, health status, API docs link, current version, and upstream/downstream dependencies.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
       </div>
-      <div class="module-body">
-        <div class="callout callout-info" style="margin-top:0;margin-bottom:1rem"><i class="ti ti-info-circle"></i>Build the observability foundation <em>first</em>. This module ships pre-configured and is used by all other modules.</div>
-        <ul class="feature-list">
-          <li>
-            <i class="ti ti-chart-line" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Unified metrics &amp; log aggregator</span>
-              <span class="feat-desc">Prometheus scrapes all services automatically. Grafana dashboards are pre-built. Loki/Promtail collects structured logs. Zero configuration for learners.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-binary-tree" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Distributed tracing dashboard (Jaeger)</span>
-              <span class="feat-desc">Correlation IDs propagated automatically via OpenTelemetry. The control panel lets learners follow a single request across N service hops and identify the slowest span.</span>
-            </div>
-          </li>
-          <li>
-            <i class="ti ti-building-store" aria-hidden="true"></i>
-            <div>
-              <span class="feat-name">Humane service registry</span>
-              <span class="feat-desc">A lightweight Backstage-inspired catalog that lists each sandbox service with: owner, health status, API docs link, current version, and upstream/downstream dependencies.</span>
-            </div>
-          </li>
-        </ul>
+    </div>
+
+    <div class="section" id="architecture">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>System architecture</h2>
+      </div>
+      <p>The entire platform runs locally via <code>docker compose up</code>. A Next.js control panel (the
+        "DistributedLab UI") orchestrates experiments by calling a thin Spring Boot "Lab API" that manipulates
+        containers and injects faults via the Docker socket and Toxiproxy.</p>
+      <div class="arch-diagram">
+        <div
+          style="font-size:11px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-tertiary);margin-bottom:1rem">
+          High-level component layout</div>
+        <div class="arch-row">
+          <div class="arch-layer" style="text-align:center"><span>Learner browser</span>DistributedLab UI (Next.js)
+          </div>
+        </div>
+        <div style="text-align:center;color:var(--color-text-tertiary);font-size:20px;margin:4px 0">↕</div>
+        <div class="arch-row">
+          <div class="arch-layer" style="text-align:center"><span>Control layer</span>Lab API (Spring Boot) · REST +
+            WebSocket</div>
+        </div>
+        <div style="text-align:center;color:var(--color-text-tertiary);font-size:20px;margin:4px 0">↕</div>
+        <div class="arch-row" style="gap:8px">
+          <div class="arch-layer" style="text-align:center;flex:1"><span>Fault injection</span>Toxiproxy · Docker API
+          </div>
+          <div class="arch-layer" style="text-align:center;flex:1"><span>Sandbox services</span>Monolith · Microservices
+          </div>
+          <div class="arch-layer" style="text-align:center;flex:1"><span>Observability</span>Prometheus · Jaeger · Loki
+          </div>
+        </div>
+        <div style="text-align:center;color:var(--color-text-tertiary);font-size:20px;margin:4px 0">↕</div>
+        <div class="arch-row" style="gap:8px">
+          <div class="arch-layer" style="text-align:center;flex:1"><span>Storage</span>PostgreSQL · MongoDB · Neo4j ·
+            Redis · Kafka</div>
+          <div class="arch-layer" style="text-align:center;flex:1"><span>Proxy layer</span>Envoy · Nginx (Strangler Fig)
+          </div>
+        </div>
+        <div class="arch-legend">
+          <span><span class="dot" style="background:#1D9E75"></span>Docker Compose network</span>
+          <span><span class="dot" style="background:#378ADD"></span>WebSocket for real-time events</span>
+          <span><span class="dot" style="background:#BA7517"></span>Docker socket (fault injection)</span>
+        </div>
+      </div>
+      <div class="callout callout-warn" style="margin-top:1.25rem"><i class="ti ti-alert-triangle"></i>The Docker socket
+        is mounted read-write into the Lab API container for fault injection. The sandbox should <em>never</em> run on a
+        production host or with untrusted users.</div>
+    </div>
+
+    <div class="section" id="stack">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>Technology stack</h2>
+      </div>
+      <div class="stack-grid">
+        <div class="stack-group">
+          <div class="sg-label">Control panel</div>
+          <div class="stack-item"><i class="ti ti-brand-nextjs" aria-hidden="true"></i>Next.js 16 (App Router)</div>
+          <div class="stack-item"><i class="ti ti-brand-tailwind" aria-hidden="true"></i>Tailwind CSS</div>
+          <div class="stack-item"><i class="ti ti-chart-bar" aria-hidden="true"></i>Recharts / D3</div>
+          <div class="stack-item"><i class="ti ti-plug" aria-hidden="true"></i>WebSocket (live updates)</div>
+        </div>
+        <div class="stack-group">
+          <div class="sg-label">Lab API</div>
+          <div class="stack-item"><i class="ti ti-coffee" aria-hidden="true"></i>Spring Boot 3 (Java 21)</div>
+          <div class="stack-item"><i class="ti ti-api" aria-hidden="true"></i>REST + WebSocket (STOMP)</div>
+          <div class="stack-item"><i class="ti ti-brand-docker" aria-hidden="true"></i>Docker Java SDK</div>
+          <div class="stack-item"><i class="ti ti-shield-lock" aria-hidden="true"></i>Resilience4j (demos)</div>
+        </div>
+        <div class="stack-group">
+          <div class="sg-label">Sandbox services</div>
+          <div class="stack-item"><i class="ti ti-coffee" aria-hidden="true"></i>Spring Boot microservices</div>
+          <div class="stack-item"><i class="ti ti-message-2" aria-hidden="true"></i>Apache Kafka + Debezium</div>
+          <div class="stack-item"><i class="ti ti-contract" aria-hidden="true"></i>Pact Broker (CDC)</div>
+          <div class="stack-item"><i class="ti ti-bolt" aria-hidden="true"></i>Toxiproxy (fault proxy)</div>
+        </div>
+        <div class="stack-group">
+          <div class="sg-label">Storage</div>
+          <div class="stack-item"><i class="ti ti-database" aria-hidden="true"></i>PostgreSQL 16</div>
+          <div class="stack-item"><i class="ti ti-file-code" aria-hidden="true"></i>MongoDB 7</div>
+          <div class="stack-item"><i class="ti ti-topology-star" aria-hidden="true"></i>Neo4j 5</div>
+          <div class="stack-item"><i class="ti ti-server" aria-hidden="true"></i>Redis 7</div>
+        </div>
+        <div class="stack-group">
+          <div class="sg-label">Observability</div>
+          <div class="stack-item"><i class="ti ti-chart-line" aria-hidden="true"></i>Prometheus + Grafana</div>
+          <div class="stack-item"><i class="ti ti-binary-tree" aria-hidden="true"></i>Jaeger (OpenTelemetry)</div>
+          <div class="stack-item"><i class="ti ti-file-text" aria-hidden="true"></i>Loki + Promtail</div>
+          <div class="stack-item"><i class="ti ti-building-store" aria-hidden="true"></i>Backstage (service catalog)
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="sg-label">Infrastructure</div>
+          <div class="stack-item"><i class="ti ti-brand-docker" aria-hidden="true"></i>Docker Compose (v1 target)</div>
+          <div class="stack-item"><i class="ti ti-brand-github" aria-hidden="true"></i>GitHub Actions CI</div>
+          <div class="stack-item"><i class="ti ti-license" aria-hidden="true"></i>MIT license</div>
+          <div class="stack-item"><i class="ti ti-file-code-2" aria-hidden="true"></i>Monorepo (pnpm + Maven)</div>
+        </div>
       </div>
     </div>
 
-  </div>
-</div>
+    <div class="section" id="repo">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2>Repository structure</h2>
+      </div>
+      <p>A monorepo makes it easy for the community to clone the entire lab at once. Folder boundaries maintain clear
+        service separation.</p>
+      <div class="repo-tree">
+        <span class="dir">distributed-lab/</span>
+        ├── <span class="dir">apps/</span>
+        │ ├── <span class="dir">control-panel/</span> <span class="comment"># Next.js UI</span>
+        │ └── <span class="dir">lab-api/</span> <span class="comment"># Spring Boot Lab API</span>
+        ├── <span class="dir">services/</span>
+        │ ├── <span class="dir">monolith/</span> <span class="comment"># MusicCorp monolith</span>
+        │ ├── <span class="dir">catalog-service/</span>
+        │ ├── <span class="dir">order-service/</span>
+        │ ├── <span class="dir">payment-service/</span>
+        │ └── <span class="dir">_template/</span> <span class="comment"># Skeleton service (logs, health, OTel)</span>
+        ├── <span class="dir">infra/</span>
+        │ ├── <span class="dir">proxy/</span> <span class="comment"># Envoy / Nginx Strangler Fig config</span>
+        │ ├── <span class="dir">observability/</span> <span class="comment"># Prometheus, Grafana, Jaeger, Loki</span>
+        │ └── <span class="dir">chaos/</span> <span class="comment"># Toxiproxy, Chaos Toolkit scenarios</span>
+        ├── <span class="dir">labs/</span>
+        │ ├── <span class="dir">01-migration/</span>
+        │ ├── <span class="dir">02-consistency/</span>
+        │ ├── <span class="dir">03-chaos/</span>
+        │ ├── <span class="dir">04-workflows/</span>
+        │ └── <span class="dir">05-observability/</span>
+        ├── <span class="dir">docs/</span> <span class="comment"># Concept guides, screenshots</span>
+        ├── docker-compose.yml <span class="comment"># Full stack</span>
+        ├── docker-compose.dev.yml <span class="comment"># Dev overrides</span>
+        └── README.md
+      </div>
+    </div>
 
-<div class="section" id="architecture">
-  <div class="section-header">
-    <span class="section-num">03</span>
-    <h2>System architecture</h2>
-  </div>
-  <p>The entire platform runs locally via <code>docker compose up</code>. A Next.js control panel (the "DistributedLab UI") orchestrates experiments by calling a thin Spring Boot "Lab API" that manipulates containers and injects faults via the Docker socket and Toxiproxy.</p>
-  <div class="arch-diagram">
-    <div style="font-size:11px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-tertiary);margin-bottom:1rem">High-level component layout</div>
-    <div class="arch-row">
-      <div class="arch-layer" style="text-align:center"><span>Learner browser</span>DistributedLab UI (Next.js)</div>
+    <div class="section" id="roadmap">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2>Build roadmap</h2>
+      </div>
+      <div class="roadmap">
+        <div class="phase active">
+          <div class="phase-dot"></div>
+          <div class="phase-label">Phase 1 — Foundation (weeks 1–3)</div>
+          <h4>Observability-first skeleton</h4>
+          <ul>
+            <li>Docker Compose with Prometheus, Grafana, Jaeger, Loki</li>
+            <li>Control panel shell (Next.js, dark/light mode, sidebar nav)</li>
+            <li>Lab API with Docker socket integration (start/stop containers)</li>
+            <li>Monolith skeleton (MusicCorp — catalog, orders, payments)</li>
+            <li>Service registry (Backstage lite)</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="phase-dot"></div>
+          <div class="phase-label">Phase 2 — Module 01 (weeks 4–6)</div>
+          <h4>Migration lab</h4>
+          <ul>
+            <li>Envoy Strangler Fig proxy with UI route-redirect controls</li>
+            <li>Parallel Run comparator (diff viewer)</li>
+            <li>Feature toggle dashboard (Redis-backed)</li>
+            <li>Extract catalog-service from monolith as worked example</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="phase-dot"></div>
+          <div class="phase-label">Phase 3 — Module 02 (weeks 7–10)</div>
+          <h4>Data &amp; consistency sandbox</h4>
+          <ul>
+            <li>PostgreSQL leader-follower replication + lag slider</li>
+            <li>CAP partition simulator (two-node KV store, iptables)</li>
+            <li>Multi-model explorer (PostgreSQL / MongoDB / Neo4j)</li>
+            <li>Debezium CDC → Kafka → Elasticsearch pipeline</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="phase-dot"></div>
+          <div class="phase-label">Phase 4 — Modules 03 &amp; 04 (weeks 11–15)</div>
+          <h4>Chaos, workflows &amp; communication</h4>
+          <ul>
+            <li>Toxiproxy fault injection panel</li>
+            <li>Resilience4j circuit breaker demo service</li>
+            <li>Saga visualizer (orchestrated + choreographed)</li>
+            <li>Pact Broker integration and CDC tester</li>
+            <li>Communication style lab (REST vs gRPC vs Kafka)</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="phase-dot"></div>
+          <div class="phase-label">Phase 5 — Open source launch (week 16+)</div>
+          <h4>Community &amp; polish</h4>
+          <ul>
+            <li>Contributor guide, issue templates, good-first-issue labels</li>
+            <li>Lab scenario plugin API (community can add new labs)</li>
+            <li>GitHub Actions CI (test + compose health check)</li>
+            <li>Demo video + docs site (Docusaurus)</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div style="text-align:center;color:var(--color-text-tertiary);font-size:20px;margin:4px 0">↕</div>
-    <div class="arch-row">
-      <div class="arch-layer" style="text-align:center"><span>Control layer</span>Lab API (Spring Boot) · REST + WebSocket</div>
-    </div>
-    <div style="text-align:center;color:var(--color-text-tertiary);font-size:20px;margin:4px 0">↕</div>
-    <div class="arch-row" style="gap:8px">
-      <div class="arch-layer" style="text-align:center;flex:1"><span>Fault injection</span>Toxiproxy · Docker API</div>
-      <div class="arch-layer" style="text-align:center;flex:1"><span>Sandbox services</span>Monolith · Microservices</div>
-      <div class="arch-layer" style="text-align:center;flex:1"><span>Observability</span>Prometheus · Jaeger · Loki</div>
-    </div>
-    <div style="text-align:center;color:var(--color-text-tertiary);font-size:20px;margin:4px 0">↕</div>
-    <div class="arch-row" style="gap:8px">
-      <div class="arch-layer" style="text-align:center;flex:1"><span>Storage</span>PostgreSQL · MongoDB · Neo4j · Redis · Kafka</div>
-      <div class="arch-layer" style="text-align:center;flex:1"><span>Proxy layer</span>Envoy · Nginx (Strangler Fig)</div>
-    </div>
-    <div class="arch-legend">
-      <span><span class="dot" style="background:#1D9E75"></span>Docker Compose network</span>
-      <span><span class="dot" style="background:#378ADD"></span>WebSocket for real-time events</span>
-      <span><span class="dot" style="background:#BA7517"></span>Docker socket (fault injection)</span>
-    </div>
-  </div>
-  <div class="callout callout-warn" style="margin-top:1.25rem"><i class="ti ti-alert-triangle"></i>The Docker socket is mounted read-write into the Lab API container for fault injection. The sandbox should <em>never</em> run on a production host or with untrusted users.</div>
-</div>
 
-<div class="section" id="stack">
-  <div class="section-header">
-    <span class="section-num">04</span>
-    <h2>Technology stack</h2>
-  </div>
-  <div class="stack-grid">
-    <div class="stack-group">
-      <div class="sg-label">Control panel</div>
-      <div class="stack-item"><i class="ti ti-brand-nextjs" aria-hidden="true"></i>Next.js 14 (App Router)</div>
-      <div class="stack-item"><i class="ti ti-brand-tailwind" aria-hidden="true"></i>Tailwind CSS</div>
-      <div class="stack-item"><i class="ti ti-chart-bar" aria-hidden="true"></i>Recharts / D3</div>
-      <div class="stack-item"><i class="ti ti-plug" aria-hidden="true"></i>WebSocket (live updates)</div>
+    <div class="section" id="principles">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2>Design principles</h2>
+      </div>
+      <div class="principles">
+        <div class="principle">
+          <h4>Observability first</h4>
+          <p>Every experiment is only as valuable as the signal it produces. The observability stack ships
+            pre-configured and is never optional.</p>
+        </div>
+        <div class="principle">
+          <h4>One command to start</h4>
+          <p><code>docker compose up</code> must be the only prerequisite. No cloud account, no manual config, no
+            database seed scripts to run by hand.</p>
+        </div>
+        <div class="principle">
+          <h4>Failure is the feature</h4>
+          <p>The platform should make it trivially easy to break things. Chaos and fault injection are first-class UI
+            elements, not afterthoughts.</p>
+        </div>
+        <div class="principle">
+          <h4>Paved road for contributors</h4>
+          <p>A <code>_template</code> skeleton service has logging, health checks, and OpenTelemetry pre-wired. New lab
+            scenarios follow a defined plugin contract.</p>
+        </div>
+        <div class="principle">
+          <h4>Concept-first naming</h4>
+          <p>UI labels always reference the originating concept (e.g. "Strangler Fig"), not the implementation tool
+            (e.g. "Envoy route config"), to reinforce learning.</p>
+        </div>
+        <div class="principle">
+          <h4>Intellectual honesty</h4>
+          <p>The repo README credits both inspiring books. No book content is reproduced verbatim. All code is original
+            implementation of the described patterns.</p>
+        </div>
+      </div>
     </div>
-    <div class="stack-group">
-      <div class="sg-label">Lab API</div>
-      <div class="stack-item"><i class="ti ti-coffee" aria-hidden="true"></i>Spring Boot 3 (Java 21)</div>
-      <div class="stack-item"><i class="ti ti-api" aria-hidden="true"></i>REST + WebSocket (STOMP)</div>
-      <div class="stack-item"><i class="ti ti-brand-docker" aria-hidden="true"></i>Docker Java SDK</div>
-      <div class="stack-item"><i class="ti ti-shield-lock" aria-hidden="true"></i>Resilience4j (demos)</div>
-    </div>
-    <div class="stack-group">
-      <div class="sg-label">Sandbox services</div>
-      <div class="stack-item"><i class="ti ti-coffee" aria-hidden="true"></i>Spring Boot microservices</div>
-      <div class="stack-item"><i class="ti ti-message-2" aria-hidden="true"></i>Apache Kafka + Debezium</div>
-      <div class="stack-item"><i class="ti ti-contract" aria-hidden="true"></i>Pact Broker (CDC)</div>
-      <div class="stack-item"><i class="ti ti-bolt" aria-hidden="true"></i>Toxiproxy (fault proxy)</div>
-    </div>
-    <div class="stack-group">
-      <div class="sg-label">Storage</div>
-      <div class="stack-item"><i class="ti ti-database" aria-hidden="true"></i>PostgreSQL 16</div>
-      <div class="stack-item"><i class="ti ti-file-code" aria-hidden="true"></i>MongoDB 7</div>
-      <div class="stack-item"><i class="ti ti-topology-star" aria-hidden="true"></i>Neo4j 5</div>
-      <div class="stack-item"><i class="ti ti-server" aria-hidden="true"></i>Redis 7</div>
-    </div>
-    <div class="stack-group">
-      <div class="sg-label">Observability</div>
-      <div class="stack-item"><i class="ti ti-chart-line" aria-hidden="true"></i>Prometheus + Grafana</div>
-      <div class="stack-item"><i class="ti ti-binary-tree" aria-hidden="true"></i>Jaeger (OpenTelemetry)</div>
-      <div class="stack-item"><i class="ti ti-file-text" aria-hidden="true"></i>Loki + Promtail</div>
-      <div class="stack-item"><i class="ti ti-building-store" aria-hidden="true"></i>Backstage (service catalog)</div>
-    </div>
-    <div class="stack-group">
-      <div class="sg-label">Infrastructure</div>
-      <div class="stack-item"><i class="ti ti-brand-docker" aria-hidden="true"></i>Docker Compose (v1 target)</div>
-      <div class="stack-item"><i class="ti ti-brand-github" aria-hidden="true"></i>GitHub Actions CI</div>
-      <div class="stack-item"><i class="ti ti-license" aria-hidden="true"></i>MIT license</div>
-      <div class="stack-item"><i class="ti ti-file-code-2" aria-hidden="true"></i>Monorepo (pnpm + Maven)</div>
-    </div>
-  </div>
-</div>
 
-<div class="section" id="repo">
-  <div class="section-header">
-    <span class="section-num">05</span>
-    <h2>Repository structure</h2>
-  </div>
-  <p>A monorepo makes it easy for the community to clone the entire lab at once. Folder boundaries maintain clear service separation.</p>
-  <div class="repo-tree">
-<span class="dir">distributed-lab/</span>
-├── <span class="dir">apps/</span>
-│   ├── <span class="dir">control-panel/</span>          <span class="comment"># Next.js UI</span>
-│   └── <span class="dir">lab-api/</span>               <span class="comment"># Spring Boot Lab API</span>
-├── <span class="dir">services/</span>
-│   ├── <span class="dir">monolith/</span>              <span class="comment"># MusicCorp monolith</span>
-│   ├── <span class="dir">catalog-service/</span>
-│   ├── <span class="dir">order-service/</span>
-│   ├── <span class="dir">payment-service/</span>
-│   └── <span class="dir">_template/</span>             <span class="comment"># Skeleton service (logs, health, OTel)</span>
-├── <span class="dir">infra/</span>
-│   ├── <span class="dir">proxy/</span>                 <span class="comment"># Envoy / Nginx Strangler Fig config</span>
-│   ├── <span class="dir">observability/</span>         <span class="comment"># Prometheus, Grafana, Jaeger, Loki</span>
-│   └── <span class="dir">chaos/</span>                 <span class="comment"># Toxiproxy, Chaos Toolkit scenarios</span>
-├── <span class="dir">labs/</span>
-│   ├── <span class="dir">01-migration/</span>
-│   ├── <span class="dir">02-consistency/</span>
-│   ├── <span class="dir">03-chaos/</span>
-│   ├── <span class="dir">04-workflows/</span>
-│   └── <span class="dir">05-observability/</span>
-├── <span class="dir">docs/</span>                      <span class="comment"># Concept guides, screenshots</span>
-├── docker-compose.yml         <span class="comment"># Full stack</span>
-├── docker-compose.dev.yml     <span class="comment"># Dev overrides</span>
-└── README.md
-  </div>
-</div>
+    <div class="doc-footer">
+      <span>DistributedLab · Specification v0.1</span>
+      <span>Inspired by <em>Building Microservices</em> &amp; <em>Designing Data-Intensive Applications</em></span>
+    </div>
 
-<div class="section" id="roadmap">
-  <div class="section-header">
-    <span class="section-num">06</span>
-    <h2>Build roadmap</h2>
   </div>
-  <div class="roadmap">
-    <div class="phase active">
-      <div class="phase-dot"></div>
-      <div class="phase-label">Phase 1 — Foundation (weeks 1–3)</div>
-      <h4>Observability-first skeleton</h4>
-      <ul>
-        <li>Docker Compose with Prometheus, Grafana, Jaeger, Loki</li>
-        <li>Control panel shell (Next.js, dark/light mode, sidebar nav)</li>
-        <li>Lab API with Docker socket integration (start/stop containers)</li>
-        <li>Monolith skeleton (MusicCorp — catalog, orders, payments)</li>
-        <li>Service registry (Backstage lite)</li>
-      </ul>
-    </div>
-    <div class="phase">
-      <div class="phase-dot"></div>
-      <div class="phase-label">Phase 2 — Module 01 (weeks 4–6)</div>
-      <h4>Migration lab</h4>
-      <ul>
-        <li>Envoy Strangler Fig proxy with UI route-redirect controls</li>
-        <li>Parallel Run comparator (diff viewer)</li>
-        <li>Feature toggle dashboard (Redis-backed)</li>
-        <li>Extract catalog-service from monolith as worked example</li>
-      </ul>
-    </div>
-    <div class="phase">
-      <div class="phase-dot"></div>
-      <div class="phase-label">Phase 3 — Module 02 (weeks 7–10)</div>
-      <h4>Data &amp; consistency sandbox</h4>
-      <ul>
-        <li>PostgreSQL leader-follower replication + lag slider</li>
-        <li>CAP partition simulator (two-node KV store, iptables)</li>
-        <li>Multi-model explorer (PostgreSQL / MongoDB / Neo4j)</li>
-        <li>Debezium CDC → Kafka → Elasticsearch pipeline</li>
-      </ul>
-    </div>
-    <div class="phase">
-      <div class="phase-dot"></div>
-      <div class="phase-label">Phase 4 — Modules 03 &amp; 04 (weeks 11–15)</div>
-      <h4>Chaos, workflows &amp; communication</h4>
-      <ul>
-        <li>Toxiproxy fault injection panel</li>
-        <li>Resilience4j circuit breaker demo service</li>
-        <li>Saga visualizer (orchestrated + choreographed)</li>
-        <li>Pact Broker integration and CDC tester</li>
-        <li>Communication style lab (REST vs gRPC vs Kafka)</li>
-      </ul>
-    </div>
-    <div class="phase">
-      <div class="phase-dot"></div>
-      <div class="phase-label">Phase 5 — Open source launch (week 16+)</div>
-      <h4>Community &amp; polish</h4>
-      <ul>
-        <li>Contributor guide, issue templates, good-first-issue labels</li>
-        <li>Lab scenario plugin API (community can add new labs)</li>
-        <li>GitHub Actions CI (test + compose health check)</li>
-        <li>Demo video + docs site (Docusaurus)</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<div class="section" id="principles">
-  <div class="section-header">
-    <span class="section-num">07</span>
-    <h2>Design principles</h2>
-  </div>
-  <div class="principles">
-    <div class="principle">
-      <h4>Observability first</h4>
-      <p>Every experiment is only as valuable as the signal it produces. The observability stack ships pre-configured and is never optional.</p>
-    </div>
-    <div class="principle">
-      <h4>One command to start</h4>
-      <p><code>docker compose up</code> must be the only prerequisite. No cloud account, no manual config, no database seed scripts to run by hand.</p>
-    </div>
-    <div class="principle">
-      <h4>Failure is the feature</h4>
-      <p>The platform should make it trivially easy to break things. Chaos and fault injection are first-class UI elements, not afterthoughts.</p>
-    </div>
-    <div class="principle">
-      <h4>Paved road for contributors</h4>
-      <p>A <code>_template</code> skeleton service has logging, health checks, and OpenTelemetry pre-wired. New lab scenarios follow a defined plugin contract.</p>
-    </div>
-    <div class="principle">
-      <h4>Concept-first naming</h4>
-      <p>UI labels always reference the originating concept (e.g. "Strangler Fig"), not the implementation tool (e.g. "Envoy route config"), to reinforce learning.</p>
-    </div>
-    <div class="principle">
-      <h4>Intellectual honesty</h4>
-      <p>The repo README credits both inspiring books. No book content is reproduced verbatim. All code is original implementation of the described patterns.</p>
-    </div>
-  </div>
-</div>
-
-<div class="doc-footer">
-  <span>DistributedLab · Specification v0.1</span>
-  <span>Inspired by <em>Building Microservices</em> &amp; <em>Designing Data-Intensive Applications</em></span>
-</div>
-
-</div>
 </body>
+
 </html>

@@ -71,7 +71,7 @@ Follow-up TODOs: None
 
 ## Technology Stack & Constraints
 
-- **Control Panel**: Next.js 14 (App Router) + Tailwind CSS + Recharts/D3
+- **Control Panel**: Next.js 16 (App Router) + Tailwind CSS + Recharts/D3
 - **Lab API**: Spring Boot 3 (Java 21) + Docker Java SDK + Resilience4j
 - **Sandbox Services**: Spring Boot microservices + Kafka + Debezium + Pact Broker + Toxiproxy
 - **Storage**: PostgreSQL 16, MongoDB 7, Neo4j 5, Redis 7, Apache Kafka
@@ -98,6 +98,7 @@ This constitution supersedes all other development practices and conventions.
 Amendments MUST include: (1) documentation of the proposed change, (2) maintainer approval, and (3) a migration plan for any existing code affected by the change.
 
 Version bumps follow semantic versioning:
+
 - **MAJOR**: Principle removal or backward-incompatible redefinition
 - **MINOR**: New principle added or materially expanded guidance
 - **PATCH**: Clarifications, wording improvements, non-semantic refinements
