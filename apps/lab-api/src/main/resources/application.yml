@@ -1,0 +1,50 @@
+server:
+  port: 3001
+
+spring:
+  application:
+    name: lab-api
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/musiccorp}
+    username: ${SPRING_DATASOURCE_USERNAME:distributedlab}
+    password: ${SPRING_DATASOURCE_PASSWORD:distributedlab}
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+otel:
+  exporter:
+    otlp:
+      endpoint: http://otel-collector:4318
+  resource:
+    attributes:
+      service.name: lab-api
+
+toxiproxy:
+  host: toxiproxy
+  port: 8474
+
+docker:
+  socket: unix:///var/run/docker.sock
+
+logging:
+  pattern:
+    console: >-
+      {"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}","level":"%level","logger":"%logger{36}","message":"%msg","traceId":"%X{traceId:-}","spanId":"%X{spanId:-}"}%n

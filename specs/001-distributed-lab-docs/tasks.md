@@ -28,12 +28,12 @@
 
 **Purpose**: Monorepo initialization, tooling, and project scaffolding
 
-- [ ] T001 Create monorepo directory structure per plan.md (apps/, services/, infra/, labs/, docs/)
-- [ ] T002 Initialize pnpm workspace and Next.js 16 control panel project in apps/control-panel/package.json
-- [ ] T003 Create Maven parent POM with Java 21, Spring Boot 3, Checkstyle, Surefire, Jacoco plugins in pom.xml
-- [ ] T004 [P] Configure ESLint + Prettier for control panel in apps/control-panel/.eslintrc.js and apps/control-panel/.prettierrc
-- [ ] T005 [P] Configure Tailwind CSS with custom theme in apps/control-panel/tailwind.config.ts
-- [ ] T006 Create .env file with default port assignments and resource limits in .env
+- [x] T001 Create monorepo directory structure per plan.md (apps/, services/, infra/, labs/, docs/)
+- [x] T002 Initialize pnpm workspace and Next.js 16 control panel project in apps/control-panel/package.json
+- [x] T003 Create Maven parent POM with Java 21, Spring Boot 3, Checkstyle, Surefire, Jacoco plugins in pom.xml
+- [x] T004 [P] Configure ESLint + Prettier for control panel in apps/control-panel/.eslintrc.js and apps/control-panel/.prettierrc
+- [x] T005 [P] Configure Tailwind CSS with custom theme in apps/control-panel/tailwind.config.ts
+- [x] T006 Create .env file with default port assignments and resource limits in .env
 
 ---
 
@@ -45,49 +45,49 @@
 
 ### Observability Stack
 
-- [ ] T007 [P] Configure Prometheus with Docker service discovery in infra/observability/prometheus.yml
-- [ ] T008 [P] Create Grafana provisioning with pre-built dashboards in infra/observability/grafana/
-- [ ] T009 [P] Configure OTel Collector + Jaeger in infra/observability/jaeger/otel-collector-config.yml
-- [ ] T010 [P] Configure Loki + Promtail for structured log collection in infra/observability/loki/promtail-config.yml
+- [x] T007 [P] Configure Prometheus with Docker service discovery in infra/observability/prometheus.yml
+- [x] T008 [P] Create Grafana provisioning with pre-built dashboards in infra/observability/grafana/
+- [x] T009 [P] Configure OTel Collector + Jaeger in infra/observability/jaeger/otel-collector-config.yml
+- [x] T010 [P] Configure Loki + Promtail for structured log collection in infra/observability/loki/promtail-config.yml
 
 ### Service Template (with OTel from creation per Constitution V)
 
-- [ ] T011 Create \_template skeleton Spring Boot service with OTel agent, health check, structured logging in services/\_template/
-- [ ] T012 Create \_template Dockerfile using Eclipse Temurin Java 21 JRE with OTel Java agent in services/\_template/Dockerfile
-- [ ] T013 Create \_template README.md with service creation instructions in services/\_template/README.md
+- [x] T011 Create \_template skeleton Spring Boot service with OTel agent, health check, structured logging in services/\_template/
+- [x] T012 Create \_template Dockerfile using Eclipse Temurin Java 21 JRE with OTel Java agent in services/\_template/Dockerfile
+- [x] T013 Create \_template README.md with service creation instructions in services/\_template/README.md
 
 ### Lab API Core
 
-- [ ] T014 Create Lab API Spring Boot project with Web, Actuator, WebSocket, OTel starters in apps/lab-api/pom.xml
-- [ ] T015 Create Lab API model classes (ServiceInfo, Experiment, Fault, CircuitBreaker, LabModule) in apps/lab-api/src/main/java/com/distributedlab/labapi/model/
-- [ ] T016 Implement Docker Java SDK client for container listing, health, and metrics in apps/lab-api/src/main/java/com/distributedlab/labapi/client/DockerClient.java
-- [ ] T017 Implement Toxiproxy client wrapper for fault injection in apps/lab-api/src/main/java/com/distributedlab/labapi/client/ToxiproxyClient.java
-- [ ] T018 Configure STOMP WebSocket with message broker in apps/lab-api/src/main/java/com/distributedlab/labapi/config/WebSocketConfig.java
-- [ ] T019 Configure CORS to allow requests from localhost:3000 in apps/lab-api/src/main/java/com/distributedlab/labapi/config/CorsConfig.java
-- [ ] T020 Implement ServiceController (GET /api/v1/services) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/ServiceController.java
-- [ ] T021 Implement FaultController (GET/POST/DELETE /api/v1/faults) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/FaultController.java
-- [ ] T022 Implement ExperimentController (GET/POST/DELETE /api/v1/experiments) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/ExperimentController.java
-- [ ] T023 Create Lab API Dockerfile with Docker socket mount in apps/lab-api/Dockerfile
+- [x] T014 Create Lab API Spring Boot project with Web, Actuator, WebSocket, OTel starters in apps/lab-api/pom.xml
+- [x] T015 Create Lab API model classes (ServiceInfo, Experiment, Fault, CircuitBreaker, LabModule) in apps/lab-api/src/main/java/com/distributedlab/labapi/model/
+- [x] T016 Implement Docker Java SDK client for container listing, health, and metrics in apps/lab-api/src/main/java/com/distributedlab/labapi/client/DockerClient.java
+- [x] T017 Implement Toxiproxy client wrapper for fault injection in apps/lab-api/src/main/java/com/distributedlab/labapi/client/ToxiproxyClient.java
+- [x] T018 Configure STOMP WebSocket with message broker in apps/lab-api/src/main/java/com/distributedlab/labapi/config/WebSocketConfig.java
+- [x] T019 Configure CORS to allow requests from localhost:3000 in apps/lab-api/src/main/java/com/distributedlab/labapi/config/CorsConfig.java
+- [x] T020 Implement ServiceController (GET /api/v1/services) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/ServiceController.java
+- [x] T021 Implement FaultController (GET/POST/DELETE /api/v1/faults) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/FaultController.java
+- [x] T022 Implement ExperimentController (GET/POST/DELETE /api/v1/experiments) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/ExperimentController.java
+- [x] T023 Create Lab API Dockerfile with Docker socket mount in apps/lab-api/Dockerfile
 
 ### MusicCorp Monolith
 
-- [ ] T024 Create monolith Spring Boot project with Web, Data JPA, Actuator starters in services/monolith/pom.xml
-- [ ] T025 Implement monolith schema (catalog, order, payment tables) with Flyway migration in services/monolith/src/main/resources/db/migration/
-- [ ] T026 Implement catalog domain (entity, repository, REST controller) in services/monolith/src/main/java/com/distributedlab/monolith/catalog/
-- [ ] T027 [P] Implement order domain (entity, repository, REST controller) in services/monolith/src/main/java/com/distributedlab/monolith/order/
-- [ ] T028 [P] Implement payment domain (entity, repository, REST controller) in services/monolith/src/main/java/com/distributedlab/monolith/payment/
-- [ ] T029 Create monolith Dockerfile in services/monolith/Dockerfile
-- [ ] T030 Add seed data for MusicCorp catalog, sample orders in services/monolith/src/main/resources/data.sql
+- [x] T024 Create monolith Spring Boot project with Web, Data JPA, Actuator starters in services/monolith/pom.xml
+- [x] T025 Implement monolith schema (catalog, order, payment tables) with Flyway migration in services/monolith/src/main/resources/db/migration/
+- [x] T026 Implement catalog domain (entity, repository, REST controller) in services/monolith/src/main/java/com/distributedlab/monolith/catalog/
+- [x] T027 [P] Implement order domain (entity, repository, REST controller) in services/monolith/src/main/java/com/distributedlab/monolith/order/
+- [x] T028 [P] Implement payment domain (entity, repository, REST controller) in services/monolith/src/main/java/com/distributedlab/monolith/payment/
+- [x] T029 Create monolith Dockerfile in services/monolith/Dockerfile
+- [x] T030 Add seed data for MusicCorp catalog, sample orders in services/monolith/src/main/resources/data.sql
 
 ### Control Panel Shell
 
-- [ ] T031 Implement design system CSS custom properties (all 22 color tokens, typography, dark mode) in apps/control-panel/src/styles/globals.css
-- [ ] T032 Implement layout components (Sidebar, Topbar, Content wrapper) per ui-design-system.md in apps/control-panel/src/components/Layout.tsx
-- [ ] T033 Implement dark/light mode toggle hook and provider in apps/control-panel/src/hooks/useTheme.ts
-- [ ] T034 Implement WebSocket client hook (STOMP) with reconnection in apps/control-panel/src/hooks/useWebSocket.ts
-- [ ] T035 Implement REST API client module for Lab API in apps/control-panel/src/lib/api-client.ts
-- [ ] T036 Create root layout with sidebar navigation and theme support in apps/control-panel/src/app/layout.tsx
-- [ ] T037 Implement ErrorBoundary component with actionable error messages per Constitution III in apps/control-panel/src/components/ErrorBoundary.tsx
+- [x] T031 Implement design system CSS custom properties (all 22 color tokens, typography, dark mode) in apps/control-panel/src/styles/globals.css
+- [x] T032 Implement layout components (Sidebar, Topbar, Content wrapper) per ui-design-system.md in apps/control-panel/src/components/Layout.tsx
+- [x] T033 Implement dark/light mode toggle hook and provider in apps/control-panel/src/hooks/useTheme.tsx
+- [x] T034 Implement WebSocket client hook (STOMP) with reconnection in apps/control-panel/src/hooks/useWebSocket.ts
+- [x] T035 Implement REST API client module for Lab API in apps/control-panel/src/lib/api-client.ts
+- [x] T036 Create root layout with sidebar navigation and theme support in apps/control-panel/src/app/layout.tsx
+- [x] T037 Implement ErrorBoundary component with actionable error messages per Constitution III in apps/control-panel/src/components/ErrorBoundary.tsx
 
 **Checkpoint**: Foundation ready — observability stack, Lab API, monolith, and control panel shell exist
 
@@ -101,19 +101,19 @@
 
 ### Tests for User Story 1
 
-- [ ] T038 [P] [US1] Write integration test: docker compose health check passes for all containers in docker-compose.test.yml
-- [ ] T039 [P] [US1] Write test: control panel page loads with sidebar nav items in apps/control-panel/tests/integration/dashboard.test.ts
+- [x] T038 [P] [US1] Write integration test: docker compose health check passes for all containers in docker-compose.test.yml
+- [x] T039 [P] [US1] Write test: control panel page loads with sidebar nav items in apps/control-panel/tests/integration/dashboard.test.ts
 
 ### Implementation for User Story 1
 
-- [ ] T040 [US1] Create docker-compose.yml with all services (control-panel, lab-api, monolith, postgres, redis, kafka, prometheus, grafana, jaeger, loki, toxiproxy) with health checks and memory limits in docker-compose.yml
-- [ ] T041 [US1] Create docker-compose.dev.yml with hot reload overrides for Next.js and Spring Boot in docker-compose.dev.yml
-- [ ] T042 [US1] Implement Dashboard placeholder page with metric card layout in apps/control-panel/src/app/page.tsx
-- [ ] T043 [US1] Implement Labs placeholder page with module card grid in apps/control-panel/src/app/labs/page.tsx
-- [ ] T044 [US1] Implement Chaos placeholder page with fault injection form skeleton in apps/control-panel/src/app/chaos/page.tsx
-- [ ] T045 [US1] Implement Registry placeholder page with service catalog table in apps/control-panel/src/app/registry/page.tsx
-- [ ] T046 [US1] Wire sidebar navigation with active state highlighting per ui-design-system.md in apps/control-panel/src/components/Sidebar.tsx
-- [ ] T047 [US1] Validate full stack starts within 120s and all health checks pass in docker-compose.yml
+- [x] T040 [US1] Create docker-compose.yml with all services (control-panel, lab-api, monolith, postgres, redis, kafka, prometheus, grafana, jaeger, loki, toxiproxy) with health checks and memory limits in docker-compose.yml
+- [x] T041 [US1] Create docker-compose.dev.yml with hot reload overrides for Next.js and Spring Boot in docker-compose.dev.yml
+- [x] T042 [US1] Implement Dashboard placeholder page with metric card layout in apps/control-panel/src/app/page.tsx
+- [x] T043 [US1] Implement Labs placeholder page with module card grid in apps/control-panel/src/app/labs/page.tsx
+- [x] T044 [US1] Implement Chaos placeholder page with fault injection form skeleton in apps/control-panel/src/app/chaos/page.tsx
+- [x] T045 [US1] Implement Registry placeholder page with service catalog table in apps/control-panel/src/app/registry/page.tsx
+- [x] T046 [US1] Wire sidebar navigation with active state highlighting per ui-design-system.md in apps/control-panel/src/components/Sidebar.tsx
+- [x] T047 [US1] Validate full stack starts within 120s and all health checks pass in docker-compose.yml
 
 **Checkpoint**: `docker compose up` launches the full platform; control panel shows all four nav items; dark/light mode works
 
@@ -127,22 +127,22 @@
 
 ### Tests for User Story 2
 
-- [ ] T048 [P] [US2] Write test: GET /api/v1/services returns list of running services in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/ServiceControllerTest.java
-- [ ] T049 [P] [US2] Write test: WebSocket /topic/services pushes SERVICE_UPDATE events in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/ServiceWebSocketTest.java
+- [x] T048 [P] [US2] Write test: GET /api/v1/services returns list of running services in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/ServiceControllerTest.java
+- [x] T049 [P] [US2] Write test: WebSocket /topic/services pushes SERVICE_UPDATE events in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/ServiceWebSocketTest.java
 
 ### Implementation for User Story 2
 
-- [ ] T050 [P] [US2] Implement shared StatusPill component (running/degraded/stopped/open/closed/completed) in apps/control-panel/src/components/StatusPill.tsx
-- [ ] T051 [P] [US2] Implement MetricCard component with sparkline SVG in apps/control-panel/src/components/MetricCard.tsx
-- [ ] T052 [P] [US2] Implement ProgressBar component (green/amber/red fills) in apps/control-panel/src/components/ProgressBar.tsx
-- [ ] T053 [P] [US2] Implement ServiceCard component with health metrics in apps/control-panel/src/components/ServiceCard.tsx
-- [ ] T054 [US2] Implement Dashboard page with metrics row, service health grid, active experiments table, and event feed in apps/control-panel/src/app/page.tsx (replaces T042 placeholder)
-- [ ] T055 [US2] Implement useServices hook to fetch and subscribe to /topic/services in apps/control-panel/src/hooks/useServices.ts
-- [ ] T056 [US2] Implement useEvents hook to subscribe to /topic/events in apps/control-panel/src/hooks/useEvents.ts
-- [ ] T057 [US2] Implement EventFeed component with severity icons and timestamps in apps/control-panel/src/components/EventFeed.tsx
-- [ ] T058 [US2] Implement ExperimentsTable component in apps/control-panel/src/components/ExperimentsTable.tsx
-- [ ] T059 [US2] Add Lab API scheduling to poll Docker for service metrics and push via WebSocket in apps/lab-api/src/main/java/com/distributedlab/labapi/service/ServiceMonitor.java
-- [ ] T060 [US2] Implement service registry API endpoint (GET /api/v1/services/{name} with owner, health, API docs, version, dependencies) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/ServiceController.java
+- [x] T050 [P] [US2] Implement shared StatusPill component (running/degraded/stopped/open/closed/completed) in apps/control-panel/src/components/StatusPill.tsx
+- [x] T051 [P] [US2] Implement MetricCard component with sparkline SVG in apps/control-panel/src/components/MetricCard.tsx
+- [x] T052 [P] [US2] Implement ProgressBar component (green/amber/red fills) in apps/control-panel/src/components/ProgressBar.tsx
+- [x] T053 [P] [US2] Implement ServiceCard component with health metrics in apps/control-panel/src/components/ServiceCard.tsx
+- [x] T054 [US2] Implement Dashboard page with metrics row, service health grid, active experiments table, and event feed in apps/control-panel/src/app/page.tsx (replaces T042 placeholder)
+- [x] T055 [US2] Implement useServices hook to fetch and subscribe to /topic/services in apps/control-panel/src/hooks/useServices.ts
+- [x] T056 [US2] Implement useEvents hook to subscribe to /topic/events in apps/control-panel/src/hooks/useEvents.ts
+- [x] T057 [US2] Implement EventFeed component with severity icons and timestamps in apps/control-panel/src/components/EventFeed.tsx
+- [x] T058 [US2] Implement ExperimentsTable component in apps/control-panel/src/components/ExperimentsTable.tsx
+- [x] T059 [US2] Add Lab API scheduling to poll Docker for service metrics and push via WebSocket in apps/lab-api/src/main/java/com/distributedlab/labapi/service/ServiceMonitor.java
+- [x] T060 [US2] Implement service registry API endpoint (GET /api/v1/services/{name} with owner, health, API docs, version, dependencies) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/ServiceController.java
 
 **Checkpoint**: Dashboard shows real-time service health with WebSocket updates; all 6+ services visible with status pills and metrics
 
@@ -156,22 +156,22 @@
 
 ### Tests for User Story 3
 
-- [ ] T061 [P] [US3] Write test: POST /api/v1/experiments creates a strangler_fig experiment in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/ExperimentControllerTest.java
-- [ ] T062 [P] [US3] Write test: PUT /api/v1/toggles/{key} updates feature toggle state in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/ToggleControllerTest.java
+- [x] T061 [P] [US3] Write test: POST /api/v1/experiments creates a strangler_fig experiment in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/ExperimentControllerTest.java
+- [x] T062 [P] [US3] Write test: PUT /api/v1/toggles/{key} updates feature toggle state in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/ToggleControllerTest.java
 
 ### Implementation for User Story 3
 
-- [ ] T063 [P] [US3] Create catalog-service from \_template with catalog domain extracted from monolith in services/catalog-service/
-- [ ] T064 [US3] Configure Envoy proxy with dynamic route redirects in infra/proxy/envoy.yaml
-- [ ] T065 [US3] Implement StranglerFigService in Lab API to update Envoy config via REST in apps/lab-api/src/main/java/com/distributedlab/labapi/service/StranglerFigService.java
-- [ ] T066 [US3] Implement ParallelRunService that fires requests to both monolith and catalog-service in apps/lab-api/src/main/java/com/distributedlab/labapi/service/ParallelRunService.java
-- [ ] T067 [US3] Implement FeatureToggleController (GET/PUT /api/v1/toggles) backed by Redis in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/ToggleController.java
-- [ ] T068 [US3] Implement Labs page with ModuleCard components and module detail panel (select → configure → run → observe pattern) in apps/control-panel/src/app/labs/page.tsx (replaces T043 placeholder)
-- [ ] T069 [US3] Implement StranglerFig experiment form (source route, target service, traffic %) in apps/control-panel/src/components/StranglerFigForm.tsx
-- [ ] T070 [US3] Implement ParallelRun diff viewer component (side-by-side JSON comparison) in apps/control-panel/src/components/DiffViewer.tsx
-- [ ] T071 [US3] Implement FeatureToggle dashboard component in apps/control-panel/src/components/FeatureTogglePanel.tsx
-- [ ] T072 [US3] Add lab scenario definitions for Module 01 in labs/01-migration/
-- [ ] T073 [US3] Write Pact contract test between monolith and catalog-service for catalog API in services/catalog-service/src/test/java/com/distributedlab/catalog/contract/
+- [x] T063 [P] [US3] Create catalog-service from \_template with catalog domain extracted from monolith in services/catalog-service/
+- [x] T064 [US3] Configure Envoy proxy with dynamic route redirects in infra/proxy/envoy.yaml
+- [x] T065 [US3] Implement StranglerFigService in Lab API to update Envoy config via REST in apps/lab-api/src/main/java/com/distributedlab/labapi/service/StranglerFigService.java
+- [x] T066 [US3] Implement ParallelRunService that fires requests to both monolith and catalog-service in apps/lab-api/src/main/java/com/distributedlab/labapi/service/ParallelRunService.java
+- [x] T067 [US3] Implement FeatureToggleController (GET/PUT /api/v1/toggles) backed by Redis in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/ToggleController.java
+- [x] T068 [US3] Implement Labs page with ModuleCard components and module detail panel (select → configure → run → observe pattern) in apps/control-panel/src/app/labs/page.tsx (replaces T043 placeholder)
+- [x] T069 [US3] Implement StranglerFig experiment form (source route, target service, traffic %) in apps/control-panel/src/components/StranglerFigForm.tsx
+- [x] T070 [US3] Implement ParallelRun diff viewer component (side-by-side JSON comparison) in apps/control-panel/src/components/DiffViewer.tsx
+- [x] T071 [US3] Implement FeatureToggle dashboard component in apps/control-panel/src/components/FeatureTogglePanel.tsx
+- [x] T072 [US3] Add lab scenario definitions for Module 01 in labs/01-migration/
+- [x] T073 [US3] Write Pact contract test between monolith and catalog-service for catalog API in services/catalog-service/src/test/java/com/distributedlab/catalog/contract/
 
 **Checkpoint**: Migration Lab fully functional — Strangler Fig redirects, parallel run diffs, feature toggles all work from the control panel
 
@@ -185,25 +185,25 @@
 
 ### Tests for User Story 4
 
-- [ ] T074 [P] [US4] Write test: CAP partition experiment starts and reports consistency/availability choice in apps/lab-api/src/test/java/com/distributedlab/labapi/service/CapSimulatorTest.java
-- [ ] T075 [P] [US4] Write test: replication lag slider updates artificial delay in apps/lab-api/src/test/java/com/distributedlab/labapi/service/ReplicationLagServiceTest.java
+- [x] T074 [P] [US4] Write test: CAP partition experiment starts and reports consistency/availability choice in apps/lab-api/src/test/java/com/distributedlab/labapi/service/CapSimulatorTest.java
+- [x] T075 [P] [US4] Write test: replication lag slider updates artificial delay in apps/lab-api/src/test/java/com/distributedlab/labapi/service/ReplicationLagServiceTest.java
 
 ### Implementation for User Story 4
 
-- [ ] T076 [US4] Create kv-store service from \_template for two-node CAP simulation in services/kv-store/
-- [ ] T077 [US4] Implement CapSimulatorService with network partition logic in apps/lab-api/src/main/java/com/distributedlab/labapi/service/CapSimulatorService.java
-- [ ] T078 [US4] Implement ReplicationLagService with configurable PostgreSQL logical replication delay in apps/lab-api/src/main/java/com/distributedlab/labapi/service/ReplicationLagService.java
-- [ ] T079 [P] [US4] Configure PostgreSQL leader-follower replication in docker-compose.yml
-- [ ] T080 [P] [US4] Add MongoDB and Neo4j containers in docker-compose.yml
-- [ ] T081 [US4] Implement CapVisualizer component (two-node SVG with partition toggle) in apps/control-panel/src/components/CapVisualizer.tsx
-- [ ] T082 [US4] Implement ReplicationLagSlider component with real-time violation display in apps/control-panel/src/components/ReplicationLagSlider.tsx
-- [ ] T083 [US4] Implement MultiModelExplorer component comparing query results from PostgreSQL, MongoDB, Neo4j in apps/control-panel/src/components/MultiModelExplorer.tsx
-- [ ] T084 [US4] Implement MultiModelService to run same business queries against PostgreSQL, MongoDB, Neo4j and return latency/schema comparison in apps/lab-api/src/main/java/com/distributedlab/labapi/service/MultiModelService.java
-- [ ] T085 [P] [US4] Add Elasticsearch container and Debezium connector config for CDC pipeline in docker-compose.yml and infra/cdc/debezium-connector.json
-- [ ] T086 [US4] Implement CdcPipelineService (pause, replay, corrupt events) controlling Debezium → Kafka → Elasticsearch in apps/lab-api/src/main/java/com/distributedlab/labapi/service/CdcPipelineService.java
-- [ ] T087 [US4] Implement CdcPipeline component with pause/replay/corrupt controls and event stream visualization in apps/control-panel/src/components/CdcPipeline.tsx
-- [ ] T088 [US4] Implement ConsistencyLab page combining CAP visualizer, lag simulator, multi-model explorer, and CDC pipeline (select → configure → run → observe) in apps/control-panel/src/app/labs/consistency/page.tsx
-- [ ] T089 [US4] Add lab scenario definitions for Module 02 in labs/02-consistency/
+- [x] T076 [US4] Create kv-store service from \_template for two-node CAP simulation in services/kv-store/
+- [x] T077 [US4] Implement CapSimulatorService with network partition logic in apps/lab-api/src/main/java/com/distributedlab/labapi/service/CapSimulatorService.java
+- [x] T078 [US4] Implement ReplicationLagService with configurable PostgreSQL logical replication delay in apps/lab-api/src/main/java/com/distributedlab/labapi/service/ReplicationLagService.java
+- [x] T079 [P] [US4] Configure PostgreSQL leader-follower replication in docker-compose.yml
+- [x] T080 [P] [US4] Add MongoDB and Neo4j containers in docker-compose.yml
+- [x] T081 [US4] Implement CapVisualizer component (two-node SVG with partition toggle) in apps/control-panel/src/components/CapVisualizer.tsx
+- [x] T082 [US4] Implement ReplicationLagSlider component with real-time violation display in apps/control-panel/src/components/ReplicationLagSlider.tsx
+- [x] T083 [US4] Implement MultiModelExplorer component comparing query results from PostgreSQL, MongoDB, Neo4j in apps/control-panel/src/components/MultiModelExplorer.tsx
+- [x] T084 [US4] Implement MultiModelService to run same business queries against PostgreSQL, MongoDB, Neo4j and return latency/schema comparison in apps/lab-api/src/main/java/com/distributedlab/labapi/service/MultiModelService.java
+- [x] T085 [P] [US4] Add Elasticsearch container and Debezium connector config for CDC pipeline in docker-compose.yml and infra/cdc/debezium-connector.json
+- [x] T086 [US4] Implement CdcPipelineService (pause, replay, corrupt events) controlling Debezium → Kafka → Elasticsearch in apps/lab-api/src/main/java/com/distributedlab/labapi/service/CdcPipelineService.java
+- [x] T087 [US4] Implement CdcPipeline component with pause/replay/corrupt controls and event stream visualization in apps/control-panel/src/components/CdcPipeline.tsx
+- [x] T088 [US4] Implement ConsistencyLab page combining CAP visualizer, lag simulator, multi-model explorer, and CDC pipeline (select → configure → run → observe) in apps/control-panel/src/app/labs/consistency/page.tsx
+- [x] T089 [US4] Add lab scenario definitions for Module 02 in labs/02-consistency/
 
 **Checkpoint**: Data Consistency Lab works — CAP visualizer, replication lag, multi-model explorer, and CDC pipeline all functional
 
@@ -217,19 +217,19 @@
 
 ### Tests for User Story 5
 
-- [ ] T090 [P] [US5] Write test: POST /api/v1/faults injects latency via Toxiproxy in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/FaultControllerTest.java
-- [ ] T091 [P] [US5] Write test: circuit breaker state transitions push via WebSocket in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/CircuitBreakerWebSocketTest.java
+- [x] T090 [P] [US5] Write test: POST /api/v1/faults injects latency via Toxiproxy in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/FaultControllerTest.java
+- [x] T091 [P] [US5] Write test: circuit breaker state transitions push via WebSocket in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/CircuitBreakerWebSocketTest.java
 
 ### Implementation for User Story 5
 
-- [ ] T092 [US5] Implement FaultService with Toxiproxy integration (latency, packet_loss, kill, memory, partition) in apps/lab-api/src/main/java/com/distributedlab/labapi/service/FaultService.java
-- [ ] T093 [US5] Add Resilience4j circuit breaker and bulkhead dependencies; configure for payment-service, order-service, catalog-service in apps/lab-api/src/main/java/com/distributedlab/labapi/config/Resilience4jConfig.java
-- [ ] T094 [US5] Implement CircuitBreakerController (GET /api/v1/circuit-breakers) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/CircuitBreakerController.java
-- [ ] T095 [US5] Implement Chaos page with fault injection form, active faults table, circuit breaker cards in apps/control-panel/src/app/chaos/page.tsx (replaces T044 placeholder)
-- [ ] T096 [US5] Implement FaultInjectionForm component (type, target, duration, magnitude selects) in apps/control-panel/src/components/FaultInjectionForm.tsx
-- [ ] T097 [US5] Implement CircuitBreakerCard component with state visualization (closed/open/half_open) in apps/control-panel/src/components/CircuitBreakerCard.tsx
-- [ ] T098 [US5] Implement CascadingFailureMap component (SVG topology with degraded/failed highlights) in apps/control-panel/src/components/CascadingFailureMap.tsx
-- [ ] T099 [US5] Add lab scenario definitions for Module 03 in labs/03-chaos/
+- [x] T092 [US5] Implement FaultService with Toxiproxy integration (latency, packet_loss, kill, memory, partition) in apps/lab-api/src/main/java/com/distributedlab/labapi/service/FaultService.java
+- [x] T093 [US5] Add Resilience4j circuit breaker and bulkhead dependencies; configure for payment-service, order-service, catalog-service in apps/lab-api/src/main/java/com/distributedlab/labapi/config/Resilience4jConfig.java
+- [x] T094 [US5] Implement CircuitBreakerController (GET /api/v1/circuit-breakers) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/CircuitBreakerController.java
+- [x] T095 [US5] Implement Chaos page with fault injection form, active faults table, circuit breaker cards in apps/control-panel/src/app/chaos/page.tsx (replaces T044 placeholder)
+- [x] T096 [US5] Implement FaultInjectionForm component (type, target, duration, magnitude selects) in apps/control-panel/src/components/FaultInjectionForm.tsx
+- [x] T097 [US5] Implement CircuitBreakerCard component with state visualization (closed/open/half_open) in apps/control-panel/src/components/CircuitBreakerCard.tsx
+- [x] T098 [US5] Implement CascadingFailureMap component (SVG topology with degraded/failed highlights) in apps/control-panel/src/components/CascadingFailureMap.tsx
+- [x] T099 [US5] Add lab scenario definitions for Module 03 in labs/03-chaos/
 
 **Checkpoint**: Chaos Console fully functional — fault injection, circuit breaker + bulkhead visualization, cascading failure map all work
 
@@ -243,23 +243,23 @@
 
 ### Tests for User Story 6
 
-- [ ] T100 [P] [US6] Write test: POST /api/v1/sagas/start creates a choreographed saga instance in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/SagaControllerTest.java
-- [ ] T101 [P] [US6] Write test: idempotency replay detects duplicate processing in services/order-service/src/test/java/com/distributedlab/order/
+- [x] T100 [P] [US6] Write test: POST /api/v1/sagas/start creates a choreographed saga instance in apps/lab-api/src/test/java/com/distributedlab/labapi/controller/SagaControllerTest.java
+- [x] T101 [P] [US6] Write test: idempotency replay detects duplicate processing in services/order-service/src/test/java/com/distributedlab/order/
 
 ### Implementation for User Story 6
 
-- [ ] T102 [P] [US6] Create order-service from \_template with Kafka consumer/producer in services/order-service/
-- [ ] T103 [P] [US6] Create payment-service from \_template with idempotency-key mechanism in services/payment-service/
-- [ ] T104 [US6] Implement SagaService with orchestrated and choreographed execution in apps/lab-api/src/main/java/com/distributedlab/labapi/service/SagaService.java
-- [ ] T105 [US6] Implement SagaController (POST /api/v1/sagas/start, GET /api/v1/sagas/{id}) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/SagaController.java
-- [ ] T106 [US6] Implement CommunicationLabService comparing REST, gRPC, Kafka for the same interaction with latency/throughput metrics in apps/lab-api/src/main/java/com/distributedlab/labapi/service/CommunicationLabService.java
-- [ ] T107 [US6] Deploy Pact Broker container and publish initial consumer contracts in docker-compose.yml and infra/cdc/pact-broker-config.yml
-- [ ] T108 [US6] Implement SagaVisualizer component with real-time message flow SVG in apps/control-panel/src/components/SagaVisualizer.tsx
-- [ ] T109 [US6] Implement IdempotencyTester component with replay button and result verification in apps/control-panel/src/components/IdempotencyTester.tsx
-- [ ] T110 [US6] Implement CommunicationComparison component showing REST vs gRPC vs Kafka latency/throughput side-by-side in apps/control-panel/src/components/CommunicationComparison.tsx
-- [ ] T111 [US6] Implement WorkflowLab page combining saga visualizer, idempotency tester, and communication lab (select → configure → run → observe) in apps/control-panel/src/app/labs/workflows/page.tsx
-- [ ] T112 [US6] Write Pact contract test between order-service and payment-service in services/order-service/src/test/java/com/distributedlab/order/contract/
-- [ ] T113 [US6] Add lab scenario definitions for Module 04 in labs/04-workflows/
+- [x] T102 [P] [US6] Create order-service from \_template with Kafka consumer/producer in services/order-service/
+- [x] T103 [P] [US6] Create payment-service from \_template with idempotency-key mechanism in services/payment-service/
+- [x] T104 [US6] Implement SagaService with orchestrated and choreographed execution in apps/lab-api/src/main/java/com/distributedlab/labapi/service/SagaService.java
+- [x] T105 [US6] Implement SagaController (POST /api/v1/sagas/start, GET /api/v1/sagas/{id}) in apps/lab-api/src/main/java/com/distributedlab/labapi/controller/SagaController.java
+- [x] T106 [US6] Implement CommunicationLabService comparing REST, gRPC, Kafka for the same interaction with latency/throughput metrics in apps/lab-api/src/main/java/com/distributedlab/labapi/service/CommunicationLabService.java
+- [x] T107 [US6] Deploy Pact Broker container and publish initial consumer contracts in docker-compose.yml and infra/cdc/pact-broker-config.yml
+- [x] T108 [US6] Implement SagaVisualizer component with real-time message flow SVG in apps/control-panel/src/components/SagaVisualizer.tsx
+- [x] T109 [US6] Implement IdempotencyTester component with replay button and result verification in apps/control-panel/src/components/IdempotencyTester.tsx
+- [x] T110 [US6] Implement CommunicationComparison component showing REST vs gRPC vs Kafka latency/throughput side-by-side in apps/control-panel/src/components/CommunicationComparison.tsx
+- [x] T111 [US6] Implement WorkflowLab page combining saga visualizer, idempotency tester, and communication lab (select → configure → run → observe) in apps/control-panel/src/app/labs/workflows/page.tsx
+- [x] T112 [US6] Write Pact contract test between order-service and payment-service in services/order-service/src/test/java/com/distributedlab/order/contract/
+- [x] T113 [US6] Add lab scenario definitions for Module 04 in labs/04-workflows/
 
 **Checkpoint**: Workflow Lab fully functional — saga visualization, idempotency testing, communication comparison, and Pact contract testing all work
 
@@ -269,13 +269,13 @@
 
 **Purpose**: Documentation, CI, and community readiness
 
-- [ ] T114 [P] Implement responsive sidebar collapse at 860px breakpoint in apps/control-panel/src/components/Sidebar.tsx
-- [ ] T115 [P] Implement toast notification component per ui-design-system.md in apps/control-panel/src/components/Toast.tsx
-- [ ] T116 [P] Create GitHub Actions CI workflow (build + test + compose health check) in .github/workflows/ci.yml
-- [ ] T117 [P] Write contributor guide with lab scenario plugin contract in docs/CONTRIBUTING.md
-- [ ] T118 [P] Write README.md with project overview, quickstart, and architecture diagram in README.md
-- [ ] T119 Validate docker-compose.yml starts full stack within 120s on 8GB RAM machine
-- [ ] T120 Run quickstart.md validation: verify all commands and URLs work as documented
+- [x] T114 [P] Implement responsive sidebar collapse at 860px breakpoint in apps/control-panel/src/components/Sidebar.tsx
+- [x] T115 [P] Implement toast notification component per ui-design-system.md in apps/control-panel/src/components/Toast.tsx
+- [x] T116 [P] Create GitHub Actions CI workflow (build + test + compose health check) in .github/workflows/ci.yml
+- [x] T117 [P] Write contributor guide with lab scenario plugin contract in docs/CONTRIBUTING.md
+- [x] T118 [P] Write README.md with project overview, quickstart, and architecture diagram in README.md
+- [x] T119 Validate docker-compose.yml starts full stack within 120s on 8GB RAM machine
+- [x] T120 Run quickstart.md validation: verify all commands and URLs work as documented
 
 ---
 

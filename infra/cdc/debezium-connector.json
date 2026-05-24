@@ -1,0 +1,21 @@
+{
+  "name": "musiccorp-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "distributedlab",
+    "database.password": "distributedlab",
+    "database.dbname": "musiccorp",
+    "database.server.name": "musiccorp",
+    "plugin.name": "pgoutput",
+    "slot.name": "debezium_slot",
+    "topic.prefix": "musiccorp",
+    "table.include.list": "public.catalog,public.orders,public.payments",
+    "snapshot.mode": "initial",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": false,
+    "value.converter.schemas.enable": false
+  }
+}

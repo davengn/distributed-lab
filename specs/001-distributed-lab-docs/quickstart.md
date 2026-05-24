@@ -18,7 +18,7 @@ docker compose up
 Wait for all containers to report healthy (typically 60–120 seconds). Then open:
 
 - **Control Panel**: http://localhost:3000
-- **Grafana**: http://localhost:3001/grafana (admin/admin)
+- **Grafana**: http://localhost:3002/grafana (admin/admin)
 - **Jaeger**: http://localhost:16686
 - **Prometheus**: http://localhost:9090
 
@@ -105,5 +105,5 @@ cp -r services/_template services/my-new-service
 | MongoDB | 27017 |
 | Redis | 6379 |
 | Prometheus | 9090 |
-| Grafana | 3001 (sub-path) |
+| Grafana | 3002 (sub-path) |
 | Jaeger | 16686 |

@@ -1,0 +1,30 @@
+{
+  "name": "distributed-lab-chaos",
+  "version": "1.0.0",
+  "proxies": [
+    {
+      "name": "monolith-downstream",
+      "listen": "0.0.0.0:15001",
+      "upstream": "monolith:8080",
+      "enabled": true
+    },
+    {
+      "name": "catalog-downstream",
+      "listen": "0.0.0.0:15002",
+      "upstream": "catalog-service:8081",
+      "enabled": true
+    },
+    {
+      "name": "order-downstream",
+      "listen": "0.0.0.0:15003",
+      "upstream": "order-service:8082",
+      "enabled": true
+    },
+    {
+      "name": "payment-downstream",
+      "listen": "0.0.0.0:15004",
+      "upstream": "payment-service:8083",
+      "enabled": true
+    }
+  ]
+}

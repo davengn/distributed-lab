@@ -1,0 +1,111 @@
+# Envoy proxy configuration for the Strangler Fig migration lab.
+#
+# All external traffic enters through Envoy on port 8000. By default every
+# request is forwarded to the monolith on port 8080. As individual routes are
+# extracted into microservices you can redirect traffic here -- one route at
+# a time -- without any client-side changes.
+#
+# How to add a new route redirect (Strangler Fig pattern):
+# -------------------------------------------------------
+# 1. Uncomment (or add) a route entry in the routes list *before* the
+#    catch-all default route.
+# 2. Point the route at the new upstream cluster (e.g. catalog_service).
+# 3. Restart / hot-reload Envoy:  docker compose restart proxy
+#
+# Example -- redirect catalog API to the new catalog-service:
+#
+#   - match:
+#       prefix: "/api/catalog"
+#     route:
+#       cluster: catalog_service
+#
+# For a Parallel Run scenario you can add a request_mirror policy instead:
+#
+#   - match:
+#       prefix: "/api/catalog"
+#     route:
+#       cluster: monolith
+#       request_mirror_policies:
+#         - cluster: catalog_service
+#           runtime_fraction:
+#             default_value:
+#               numerator: 100
+#               denominator: PERCENT_HUNDRED
+
+admin:
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9901
+
+static_resources:
+  listeners:
+    - name: listener_0
+      address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 8000
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: ingress_http
+                codec_type: AUTO
+                route_config:
+                  name: strangler_fig_routes
+                  virtual_hosts:
+                    - name: backend
+                      domains: ["*"]
+                      routes:
+                        # ---------------------------------------------------
+                        # Strangler Fig redirects go here (add above the
+                        # catch-all default route).
+                        # ---------------------------------------------------
+
+                        # Strangler Fig: redirect /api/catalog to catalog-service
+                        # To activate, uncomment the block below:
+                        # - match:
+                        #     prefix: "/api/catalog"
+                        #   route:
+                        #     cluster: catalog_service
+
+                        # Default: route everything to monolith
+                        - match:
+                            prefix: "/"
+                          route:
+                            cluster: monolith
+
+                http_filters:
+                  - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
+  clusters:
+    - name: monolith
+      connect_timeout: 5s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: monolith
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: monolith
+                      port_value: 8080
+
+    - name: catalog_service
+      connect_timeout: 5s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: catalog_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: catalog-service
+                      port_value: 8081

@@ -1,0 +1,201 @@
+services:
+  # --- Applications ---
+  control-panel:
+    build:
+      context: ./apps/control-panel
+      dockerfile: Dockerfile
+    ports:
+      - "${CONTROL_PANEL_PORT:-3000}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:${LAB_API_PORT:-3001}
+      - NEXT_PUBLIC_WS_URL=ws://localhost:${LAB_API_PORT:-3001}/ws
+    depends_on:
+      lab-api:
+        condition: service_healthy
+    mem_limit: ${CONTROL_PANEL_MEMORY:-512}m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  lab-api:
+    build:
+      context: .
+      dockerfile: apps/lab-api/Dockerfile
+    ports:
+      - "${LAB_API_PORT:-3001}:3001"
+    volumes:
+      - "${DOCKER_SOCKET_PATH:-/var/run/docker.sock}:/var/run/docker.sock"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      toxiproxy:
+        condition: service_started
+      otel-collector:
+        condition: service_started
+    environment:
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/musiccorp
+      - SPRING_DATASOURCE_USERNAME=distributedlab
+      - SPRING_DATASOURCE_PASSWORD=distributedlab
+      - TOXIPROXY_HOST=toxiproxy
+      - DOCKER_SOCKET=unix:///var/run/docker.sock
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=lab-api
+    mem_limit: ${LAB_API_MEMORY:-1024}m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  monolith:
+    build:
+      context: .
+      dockerfile: services/monolith/Dockerfile
+    ports:
+      - "${MONOLITH_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/musiccorp
+      - SPRING_DATASOURCE_USERNAME=distributedlab
+      - SPRING_DATASOURCE_PASSWORD=distributedlab
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=monolith
+    mem_limit: ${MONOLITH_MEMORY:-1024}m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # --- Infrastructure ---
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_DB=musiccorp
+      - POSTGRES_USER=distributedlab
+      - POSTGRES_PASSWORD=distributedlab
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U distributedlab -d musiccorp"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  kafka:
+    image: confluentinc/cp-kafka:7.7.0
+    ports:
+      - "${KAFKA_PORT:-9092}:9092"
+    environment:
+      - CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
+      - KAFKA_NODE_ID=1
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,HOST:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,HOST://localhost:9092
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:29093
+      - KAFKA_LISTENERS=PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,HOST://0.0.0.0:9092
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  toxiproxy:
+    image: ghcr.io/shopify/toxiproxy:2.12.0
+    ports:
+      - "8474:8474"
+    mem_limit: 128m
+
+  # --- Observability ---
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.152.1
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "8889:8889"
+    volumes:
+      - ./infra/observability/jaeger/otel-collector-config.yml:/etc/otelcol-contrib/config.yaml
+    depends_on:
+      jaeger:
+        condition: service_started
+      loki:
+        condition: service_started
+    mem_limit: 256m
+
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./infra/observability/prometheus.yml:/etc/prometheus/prometheus.yml
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    ports:
+      - "${GRAFANA_PORT:-3002}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SERVER_ROOT_URL=http://localhost:${GRAFANA_PORT:-3002}/grafana
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    volumes:
+      - ./infra/observability/grafana/provisioning:/etc/grafana/provisioning
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      prometheus:
+        condition: service_started
+    mem_limit: 256m
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.65.0
+    ports:
+      - "${JAEGER_PORT:-16686}:16686"
+      - "4317"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    mem_limit: 256m
+
+  loki:
+    image: grafana/loki:3.3.2
+    ports:
+      - "${LOKI_PORT:-3100}:3100"
+    mem_limit: 256m
+
+volumes:
+  postgres-data:
+  grafana-data:
