@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title">
+  <title id="title">Rock album cover</title>
+  <rect width="640" height="480" fill="#18181b"/>
+  <path d="M80 90h480v300H80z" fill="#dc2626"/>
+  <path d="M112 344 288 116l90 126 74-82 76 184z" fill="#f8fafc"/>
+  <path d="M128 398h384" stroke="#fbbf24" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="498" cy="120" r="38" fill="#111827"/>
+</svg>

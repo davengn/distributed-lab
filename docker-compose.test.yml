@@ -2,6 +2,8 @@ services:
   test-runner:
     image: alpine:3.20
     depends_on:
+      musiccorp-ui:
+        condition: service_healthy
       control-panel:
         condition: service_healthy
       lab-api:
@@ -11,6 +13,7 @@ services:
     entrypoint: >
       sh -c '
         echo "=== Health Check Tests ==="
+        echo -n "MusicCorp UI: " && wget -qO- http://musiccorp-ui:3000 > /dev/null && echo "OK" || echo "FAIL"
         echo -n "Control Panel: " && wget -qO- http://control-panel:3000 > /dev/null && echo "OK" || echo "FAIL"
         echo -n "Lab API: " && wget -qO- http://lab-api:3001/actuator/health > /dev/null && echo "OK" || echo "FAIL"
         echo -n "Monolith: " && wget -qO- http://monolith:8080/actuator/health > /dev/null && echo "OK" || echo "FAIL"

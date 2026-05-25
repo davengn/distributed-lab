@@ -8,7 +8,11 @@
     "dev": "pnpm --filter control-panel dev",
     "build": "pnpm --filter control-panel build",
     "lint": "pnpm --filter control-panel lint",
-    "test": "pnpm --filter control-panel test"
+    "test": "pnpm --filter control-panel test",
+    "musiccorp:dev": "pnpm --filter musiccorp-ui dev",
+    "musiccorp:build": "pnpm --filter musiccorp-ui build",
+    "musiccorp:lint": "pnpm --filter musiccorp-ui lint",
+    "musiccorp:test": "pnpm --filter musiccorp-ui test"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title">
+  <title id="title">Jazz album cover</title>
+  <rect width="640" height="480" fill="#0f172a"/>
+  <path d="M0 380c150-90 300-90 640 0v100H0z" fill="#f59e0b"/>
+  <circle cx="220" cy="188" r="94" fill="#f8fafc"/>
+  <circle cx="220" cy="188" r="28" fill="#0f172a"/>
+  <path d="M356 128c76 8 118 48 126 118" fill="none" stroke="#22c55e" stroke-width="26" stroke-linecap="round"/>
+  <path d="M124 92h246" stroke="#6366f1" stroke-width="30" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --filter musiccorp-ui test --no-coverage)",
+      "Bash(pnpm test *)",
+      "mcp__codegraph__codegraph_explore",
+      "mcp__codegraph__codegraph_files"
+    ]
+  }
+}

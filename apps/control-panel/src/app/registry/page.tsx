@@ -13,7 +13,7 @@ export default function RegistryPage() {
   return (
     <div className="min-w-0">
       <Panel title="Service Topology" className="mb-6" noPadding>
-        <ServiceTopology />
+        <ServiceTopology services={services} />
       </Panel>
 
       <Panel title="Service Catalog" noPadding>

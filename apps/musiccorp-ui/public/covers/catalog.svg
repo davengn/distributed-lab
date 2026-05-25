@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title">
+  <title id="title">MusicCorp catalog cover</title>
+  <rect width="640" height="480" fill="#111827"/>
+  <rect x="56" y="56" width="528" height="368" rx="28" fill="#4338ca"/>
+  <circle cx="320" cy="240" r="118" fill="#f8fafc" opacity=".92"/>
+  <circle cx="320" cy="240" r="34" fill="#111827"/>
+  <path d="M128 344h384" stroke="#f97316" stroke-width="28" stroke-linecap="round"/>
+  <path d="M170 136h176" stroke="#14b8a6" stroke-width="24" stroke-linecap="round"/>
+</svg>

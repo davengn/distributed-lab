@@ -49,14 +49,14 @@ static_resources:
         - filters:
             - name: envoy.filters.network.http_connection_manager
               typed_config:
-                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
                 stat_prefix: ingress_http
                 codec_type: AUTO
                 route_config:
                   name: strangler_fig_routes
                   virtual_hosts:
                     - name: backend
-                      domains: ["*"]
+                      domains: ['*']
                       routes:
                         # ---------------------------------------------------
                         # Strangler Fig redirects go here (add above the
@@ -65,21 +65,21 @@ static_resources:
 
                         # Strangler Fig: redirect /api/catalog to catalog-service
                         # To activate, uncomment the block below:
-                        # - match:
-                        #     prefix: "/api/catalog"
-                        #   route:
-                        #     cluster: catalog_service
+                        - match:
+                            prefix: '/api/catalog'
+                          route:
+                            cluster: catalog_service
 
                         # Default: route everything to monolith
                         - match:
-                            prefix: "/"
+                            prefix: '/'
                           route:
                             cluster: monolith
 
                 http_filters:
                   - name: envoy.filters.http.router
                     typed_config:
-                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+                      '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   clusters:
     - name: monolith

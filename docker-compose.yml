@@ -19,6 +19,24 @@ services:
       timeout: 5s
       retries: 5
 
+  musiccorp-ui:
+    build:
+      context: ./apps/musiccorp-ui
+      dockerfile: Dockerfile
+    ports:
+      - "${MUSICCORP_UI_PORT:-3003}:3000"
+    environment:
+      - MUSICCORP_BACKEND_BASE_URL=http://proxy:8000
+    depends_on:
+      monolith:
+        condition: service_healthy
+    mem_limit: ${MUSICCORP_UI_MEMORY:-512}m
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://$(hostname):3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   lab-api:
     build:
       context: .
@@ -75,6 +93,45 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
+
+  catalog-service:
+    build:
+      context: .
+      dockerfile: services/catalog-service/Dockerfile
+    ports:
+      - "${CATALOG_SERVICE_PORT:-8081}:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/musiccorp
+      - SPRING_DATASOURCE_USERNAME=distributedlab
+      - SPRING_DATASOURCE_PASSWORD=distributedlab
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=catalog-service
+    mem_limit: ${CATALOG_SERVICE_MEMORY:-512}m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # --- API Gateway (Strangler Fig) ---
+  proxy:
+    image: envoyproxy/envoy:v1.31-latest
+    ports:
+      - "${ENVOY_PORT:-8000}:8000"
+      - "${ENVOY_ADMIN_PORT:-9901}:9901"
+    volumes:
+      - ./infra/proxy/envoy.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+      monolith:
+        condition: service_healthy
+      catalog-service:
+        condition: service_healthy
+    mem_limit: 128m
 
   # --- Infrastructure ---
   postgres:
