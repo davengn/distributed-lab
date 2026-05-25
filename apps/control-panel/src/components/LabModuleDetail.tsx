@@ -3,13 +3,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { LabExperimentDefinition, LabGuideSection, LabModule } from '@/lib/lab-modules';
 import { TabButton } from './Panel';
+import { LabTestingWorkspace } from './LabTestingWorkspace';
 
-type DetailTab = 'overview' | 'experiments' | 'guide';
+type DetailTab = 'overview' | 'experiments' | 'guide' | 'testing';
 
 const tabs: { id: DetailTab; label: string }[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'experiments', label: 'Experiments' },
   { id: 'guide', label: 'Guide' },
+  { id: 'testing', label: 'Testing' },
 ];
 
 interface LabModuleDetailProps {
@@ -85,6 +87,10 @@ export function LabModuleDetail({ module }: LabModuleDetailProps) {
 
         {activeTab === 'guide' && (
           <GuideTab guide={module.guide} />
+        )}
+
+        {activeTab === 'testing' && (
+          <LabTestingWorkspace module={module} />
         )}
       </div>
     </section>

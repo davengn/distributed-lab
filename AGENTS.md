@@ -1,4 +1,4 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read `specs/003-lab-detail-content/plan.md`
+shell commands, and other important information, read `specs/004-lab-testing-utilities/plan.md`
 <!-- SPECKIT END -->

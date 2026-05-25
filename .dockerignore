@@ -15,4 +15,5 @@ references/
 Dockerfile*
 .dockerignore
 *.log
+*.log*
 .gitignore
