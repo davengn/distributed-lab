@@ -1,5 +1,24 @@
-import { fireEvent, renderWithProviders, screen, within } from '@/test/test-utils';
+import { fireEvent, renderWithProviders, screen, waitFor, within } from '@/test/test-utils';
 import LabsPage from '@/app/labs/page';
+import { fixtureResult, fixtureTargets } from '@/test/lab-testing-fixtures';
+
+const fetchMock = jest.fn();
+
+function jsonResponse(body: unknown, status = 200) {
+  return Promise.resolve({
+    ok: status >= 200 && status < 300,
+    status,
+    json: () => Promise.resolve(body),
+  } as Response);
+}
+
+async function openTestingWorkspace() {
+  renderWithProviders(<LabsPage />);
+  fireEvent.click(screen.getByRole('button', { name: /migration & decomposition/i }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Testing' }));
+  await screen.findByText('Lab testing workspace');
+  await screen.findByText(/Catalog Service/);
+}
 
 const moduleExpectations = [
   {
@@ -35,6 +54,17 @@ const moduleExpectations = [
 ];
 
 describe('labs prototype flow', () => {
+  beforeEach(() => {
+    fetchMock.mockReset();
+    global.fetch = fetchMock as unknown as typeof fetch;
+    window.sessionStorage.clear();
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: jest.fn().mockResolvedValue(undefined),
+      },
+    });
+  });
+
   it('renders all five prototype modules with required tags', () => {
     renderWithProviders(<LabsPage />);
 
@@ -157,5 +187,135 @@ describe('labs prototype flow', () => {
 
     expect(within(guidePanel).getByText('Steps')).toBeInTheDocument();
     expect(guidePanel).toHaveTextContent('Correlate one request');
+  });
+
+  it('renders the testing workspace and validates required request fields', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ targets: fixtureTargets }));
+
+    await openTestingWorkspace();
+    fireEvent.click(screen.getByRole('button', { name: /send request/i }));
+
+    expect(screen.getByText('Choose a target service.')).toBeInTheDocument();
+    expect(screen.getAllByText('Fix the highlighted fields.').length).toBeGreaterThan(0);
+  });
+
+  it('loads a module preset into the composer with the expected observation', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ targets: fixtureTargets }));
+
+    await openTestingWorkspace();
+    fireEvent.click(screen.getAllByRole('button', { name: /load preset/i })[0]);
+
+    expect(screen.getByDisplayValue('/api/catalog')).toBeInTheDocument();
+    expect(screen.getByDisplayValue(/X-Lab-Scenario=(baseline|shifted)/)).toBeInTheDocument();
+    expect(screen.getByText(/catalog data|catalog items/i)).toBeInTheDocument();
+  });
+
+  it('submits a preset request and displays a successful result', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ targets: fixtureTargets }))
+      .mockResolvedValueOnce(jsonResponse(fixtureResult));
+
+    await openTestingWorkspace();
+    fireEvent.click(screen.getAllByRole('button', { name: /load preset/i })[0]);
+    fireEvent.click(screen.getByRole('button', { name: /send request/i }));
+
+    expect(screen.getByText('Pending')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Succeeded')).toBeInTheDocument());
+    expect(screen.getAllByText(/kind of blue/i).length).toBeGreaterThan(0);
+  });
+
+  it('keeps failed request details actionable and preserves the draft', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ targets: fixtureTargets }))
+      .mockResolvedValueOnce(jsonResponse({
+        id: 'req-timeout',
+        targetId: 'catalog-service',
+        method: 'GET',
+        path: '/api/catalog',
+        status: 'timed_out',
+        durationMs: 5000,
+        errorCategory: 'timeout',
+        errorMessage: 'The request exceeded the configured timeout.',
+      }, 504));
+
+    await openTestingWorkspace();
+    fireEvent.click(screen.getAllByRole('button', { name: /load preset/i })[0]);
+    fireEvent.click(screen.getByRole('button', { name: /send request/i }));
+
+    await waitFor(() => expect(screen.getByText('Timed out')).toBeInTheDocument());
+    expect(screen.getAllByText('The request exceeded the configured timeout.').length)
+      .toBeGreaterThan(0);
+    expect(screen.getByDisplayValue('/api/catalog')).toBeInTheDocument();
+  });
+
+  it('stores session history, retries entries, and compares two results', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ targets: fixtureTargets }))
+      .mockResolvedValueOnce(jsonResponse(fixtureResult))
+      .mockResolvedValueOnce(jsonResponse({
+        ...fixtureResult,
+        id: 'req-2',
+        durationMs: 80,
+        bodyPreview: '[{"id":1,"title":"Blue Train"}]',
+      }));
+
+    await openTestingWorkspace();
+    fireEvent.click(screen.getAllByRole('button', { name: /load preset/i })[0]);
+    fireEvent.click(screen.getByRole('button', { name: /send request/i }));
+    await waitFor(() => expect(screen.getByText('Succeeded')).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: /send request/i }));
+    await waitFor(() => expect(screen.getAllByText(/blue train/i).length).toBeGreaterThan(0));
+
+    const compareChecks = screen.getAllByLabelText(/compare/i);
+    fireEvent.click(compareChecks[0]);
+    fireEvent.click(compareChecks[1]);
+
+    expect(screen.getByText('Comparison')).toBeInTheDocument();
+    expect(screen.getByText(/duration delta/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Copy request' })[0]);
+    fireEvent.click(screen.getAllByRole('button', { name: 'Copy response' })[0]);
+    expect(navigator.clipboard.writeText).toHaveBeenCalled();
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Retry' })[0]);
+    expect(screen.getByDisplayValue('/api/catalog')).toBeInTheDocument();
+  });
+
+  it('labels utilities by safety and requires confirmation for state-changing actions', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ targets: fixtureTargets }))
+      .mockResolvedValueOnce(jsonResponse({
+        utilityId: 'service-health-check',
+        status: 'succeeded',
+        message: 'Service health check completed.',
+        details: { 'catalog-service': 'ready' },
+      }));
+
+    await openTestingWorkspace();
+
+    expect(screen.getAllByText('Read-only').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('State-changing').length).toBeGreaterThan(0);
+    expect(screen.getByLabelText(/confirm this state-changing utility/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByRole('button', { name: /run utility/i })[0]);
+    await waitFor(() => {
+      expect(screen.getByText('Service health check completed.')).toBeInTheDocument();
+    });
+  });
+
+  it('keeps the testing tab keyboard reachable with non-color status text', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ targets: fixtureTargets }));
+
+    renderWithProviders(<LabsPage />);
+    fireEvent.click(screen.getByRole('button', { name: /migration & decomposition/i }));
+
+    const guideTab = screen.getByRole('tab', { name: 'Guide' });
+    fireEvent.click(guideTab);
+    fireEvent.keyDown(guideTab, { key: 'ArrowRight' });
+
+    expect(screen.getByRole('tabpanel', { name: 'Testing' })).toBeInTheDocument();
+    await screen.findByText('Lab testing workspace');
+    expect(screen.getByText(/Requests are limited to known local lab services/i))
+      .toBeInTheDocument();
   });
 });
